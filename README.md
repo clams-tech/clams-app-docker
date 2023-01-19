@@ -1,6 +1,11 @@
 # clams-app-docker
 Docker resources for hosting Clams App easily
 
+
+# version
+
+The version in the ./version file represents the version of this repo only. It is the version that docker images get tagged as.
+
 ## sub
 
 The purpose of this script is to use a Docker container to get and build the Clams

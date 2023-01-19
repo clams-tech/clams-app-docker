@@ -1,17 +1,21 @@
 FROM node:latest
 
+ARG GIT_REPO_URL
+ARG VERSION
+
+ENV VERSION=$VERSION
+
 RUN apt-get update && apt-get install tzdata -y
 ENV TZ="America/New_York"
 RUN npm install -g npm@9.3.0
 
 # Clone the repository
-RUN git clone https://github.com/farscapian/browser-app.git /usr/src/clams
-#https://github.com/clams-tech/browser-app.git
+RUN git clone $GIT_REPO_URL /usr/src/browser-app
 
-WORKDIR /usr/src/clams
+WORKDIR /usr/src/browser-app
 
 # checkout specific tag
-#RUN git -c advice.detachedHead=false checkout tags/1.3.0
+RUN git -c advice.detachedHead=false checkout tags/$VERSION
 
 # install dependencies
 RUN yarn
