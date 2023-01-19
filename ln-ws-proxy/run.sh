@@ -1,12 +1,11 @@
 #!/bin/bash
 
+
 set -ex
 cd "$(dirname "$0")"
 
-# the purpose of script is to build the docker images for the clams-tech Clams stack.
 
-docker pull node:latest
-
+# shellcheck source=./env
 source ./env
 
 if docker ps | grep -q "$REPO_NAME"; then
@@ -18,4 +17,14 @@ if docker ps -a | grep -q "$REPO_NAME"; then
 fi
 
 # build the dockerfile.
+docker pull node:latest
 docker build  --build-arg GIT_REPO_URL="$REPO_URL" --build-arg VERSION="$GIT_TAG" -t "$REPO_NAME":"$GIT_TAG" .
+
+# run the image, which by default copies the build output to /output in the container
+# /output is mounted to a local host directory.
+docker run -t \
+    --name "$REPO_NAME" \
+    -p 127.0.0.1:3000:3000 \
+    "$REPO_NAME":"$GIT_TAG"
+
+#--user "$UID:$UID"
