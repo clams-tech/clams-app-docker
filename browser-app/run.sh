@@ -6,7 +6,21 @@ cd "$(dirname "$0")"
 # read in the variable from the files in ./
 source ./env
 
-# TODO take OUTPUT_DIR as argument from CLI.
+OUTPUT_DIR="$(pwd)/www-root"
+
+# grab any modifications from the command line.
+for i in "$@"; do
+    case $i in
+        --output-path=*)
+            OUTPUT_DIR="${i#*=}"
+            shift
+        ;;
+        *)
+        echo "Unexpected option: $1"
+        exit 1
+        ;;
+    esac
+done
 
 if docker ps | grep -q "$REPO_NAME"; then
     docker kill "$REPO_NAME"
@@ -18,11 +32,9 @@ fi
 
 # build the dockerfile.
 docker pull node:latest
-docker build --build-arg GIT_REPO_URL="$REPO_URL" --build-arg VERSION="$GIT_TAG" --build-arg REPO_NAME="$REPO_NAME" -t browser-app:"$GIT_TAG" .
+docker build --build-arg GIT_REPO_URL="$REPO_URL" --build-arg VERSION="$GIT_TAG" -t browser-app:"$GIT_TAG" .
 
 ################
-
-OUTPUT_DIR="$(pwd)/www-root"
 
 # If the existing output directory exists, we delete it so we can get fresh files.
 if [ -d "$OUTPUT_DIR" ]; then
