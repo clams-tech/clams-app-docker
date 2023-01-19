@@ -1,4 +1,4 @@
-FROM node:18
+FROM node:18-buster
 
 ARG GIT_REPO_URL
 ARG VERSION

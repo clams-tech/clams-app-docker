@@ -31,7 +31,6 @@ if docker ps -a | grep -q "$REPO_NAME"; then
 fi
 
 # pull the base image from dockerhub and build the ./Dockerfile.
-docker pull node:latest
 docker build --build-arg GIT_REPO_URL="$REPO_URL" --build-arg VERSION="$GIT_TAG" -t browser-app:"$GIT_TAG" .
 
 # If the existing output directory exists, we delete it so we can get fresh files.

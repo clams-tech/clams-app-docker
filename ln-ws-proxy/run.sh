@@ -17,12 +17,11 @@ if docker ps -a | grep -q "$REPO_NAME"; then
 fi
 
 # build the dockerfile.
-docker pull node:latest
 docker build --build-arg GIT_REPO_URL="$REPO_URL" --build-arg VERSION="$GIT_TAG" -t "$REPO_NAME":"$GIT_TAG" .
 
 # run the image, which by default copies the build output to /output in the container
 # /output is mounted to a local host directory.
-docker run -t \
+docker run -d \
     --name "$REPO_NAME" \
     -p 127.0.0.1:3000:3000 \
     "$REPO_NAME":"$GIT_TAG"
