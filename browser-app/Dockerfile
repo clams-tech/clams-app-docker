@@ -1,6 +1,5 @@
 FROM node:latest
 
-
 ARG GIT_REPO_URL
 ARG VERSION
 
@@ -24,5 +23,8 @@ RUN yarn
 # build the project.
 RUN yarn build
 
-# default command is the run the application.
-ENTRYPOINT [ "yarn", "dev" ]
+RUN mkdir /output
+VOLUME /output
+
+# This command copies everything from 
+ENTRYPOINT [ "cp", "-a", "/browser-app/.svelte-kit/output/client/", "/output/" ]
