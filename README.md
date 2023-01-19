@@ -1,13 +1,13 @@
 # clams-app-docker
 Docker resources for hosting Clams App easily
 
-# browser-app
+## browser-app
 
-This folder contains a build script and a run script. When you execute build.sh, the env file is loaded and used to eventually get to the docker build command. In that command, we pass --build-args into the Docker build process. This results in a docker file that tracks the right git repo and tag that we want to target.
+The only script you need to run is `run.sh`. This script builds the Dockerfile for the Clams `browser-app` and saves the resulting static HTML files in a folder `www-root`. `run.sh` loads the environment variables in `./env` and passes those variables into the `docker build` process. This results in a docker image that tracks the right git repo and tag on the target git repo.
 
-When you execute the the run script, the docker container creates a new directory: www-root. The container copies the results of the browser-app build process into the www-root folder.
+After the image is built, `run.sh` executes the image, which copies the resulting project files to a local folder `www-root`. That folder contains all the HTML, CSS, and Javascript in static files that you can serve from any web server.
 
-## nginx example config
+### nginx example config
 
 TODO
 
@@ -15,3 +15,6 @@ TODO
 CONFIG EXAMPLES
 
 ```
+
+## ln-ws-proxy
+
