@@ -6,11 +6,10 @@ ARG VERSION
 ENV VERSION=$VERSION
 ENV GIT_REPO_URL=$GIT_REPO_URL
 
+# we bind the service to all interfaces.
 ENV HOST=0.0.0.0
 ENV PORT=3000
 #ENV RESTRICT_ORIGINS=
-
-#RUN npm install -g npm@9.3.1
 
 # Clone the repository
 RUN git clone $GIT_REPO_URL /ln-ws-proxy
@@ -19,16 +18,10 @@ RUN git clone $GIT_REPO_URL /ln-ws-proxy
 WORKDIR /ln-ws-proxy
 
 # checkout specific tag
-#RUN git -c advice.detachedHead=false checkout tags/$VERSION
-
-#RUN npm i node-linux-x64
-#RUN npm i uws_linux_x64_111
-#RUN npm install 
+RUN git -c advice.detachedHead=false checkout tags/$VERSION
 
 # install dependencies
-#RUN yarn add uWebSockets.js@uNetworking/uWebSockets.js#v20.10.0
 RUN yarn
-RUN yarn build
 
 # the service listens on TCP 3000
 EXPOSE 3000
