@@ -20,3 +20,11 @@ TODO
 
 The structure for `ln-ws-proxy` is a bit simpler. The `ln-ws-proxy` is long-running server-side process. When run, the `ln-ws-proxy/run.sh` script builds the image file for the project then executes a long-running process which listens at `127.0.0.1:3000/tcp`. Note! If you run host firewall, check your rules to ensure the port is permitted from localhost.
 
+### nging config
+
+An nginx config example for hosting the browser-app is shown below.
+
+```text
+TODO
+
+```
