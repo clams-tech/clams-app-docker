@@ -27,4 +27,4 @@ RUN mkdir /output
 VOLUME /output
 
 # This command copies everything from 
-ENTRYPOINT [ "cp", "-a", "/browser-app/build/", "/output/" ]
+ENTRYPOINT [ "cp", "-a", "/browser-app/build/.", "/output/" ]
