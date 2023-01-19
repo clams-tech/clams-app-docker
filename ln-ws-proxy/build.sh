@@ -7,16 +7,15 @@ cd "$(dirname "$0")"
 
 docker pull node:latest
 
-# TODO need to ask Clams guys to tag the ln-ws-proxy repo.
-#GIT_TAG="1.3.0"
+source ./env
 
-if docker ps | grep -q ln-ws-proxy; then
-    docker kill ln-ws-proxy
+if docker ps | grep -q "$REPO_NAME"; then
+    docker kill "$REPO_NAME"
 fi
 
-if docker ps -a | grep -q ln-ws-proxy; then
+if docker ps -a | grep -q "$REPO_NAME"; then
     docker system prune -f
 fi
 
 # build the dockerfile.
-docker build -t ln-ws-proxy:"$GIT_TAG" .
+docker build  --build-arg GIT_REPO_URL="$REPO_URL" --build-arg VERSION="$GIT_TAG" -t "$REPO_NAME":"$GIT_TAG" .

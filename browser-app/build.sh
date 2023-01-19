@@ -19,4 +19,4 @@ if docker ps -a | grep -q "$REPO_NAME"; then
 fi
 
 # build the dockerfile.
-docker build --build-arg GIT_REPO_URL="$REPO_URL" --build-arg VERSION="$GIT_TAG" -t browser-app:"$GIT_TAG" .
+docker build --build-arg GIT_REPO_URL="$REPO_URL" --build-arg VERSION="$GIT_TAG" --build-arg REPO_NAME="$REPO_NAME" -t browser-app:"$GIT_TAG" .

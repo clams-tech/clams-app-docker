@@ -1,5 +1,6 @@
 FROM node:latest
 
+
 ARG GIT_REPO_URL
 ARG VERSION
 
@@ -10,9 +11,9 @@ ENV TZ="America/New_York"
 RUN npm install -g npm@9.3.0
 
 # Clone the repository
-RUN git clone $GIT_REPO_URL /usr/src/browser-app
+RUN git clone $GIT_REPO_URL /browser-app
 
-WORKDIR /usr/src/browser-app
+WORKDIR /browser-app
 
 # checkout specific tag
 RUN git -c advice.detachedHead=false checkout tags/$VERSION
