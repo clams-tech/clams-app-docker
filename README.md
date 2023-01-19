@@ -1,5 +1,6 @@
 # clams-app-docker
-Docker resources for hosting Clams App easily. This repo allows you to quick get the necessary build artifacts so you can self-host your own Clams app in a docker environment.
+
+This repo allows you to quickly self-host Clams web server and ln-ws-proxy component in a docker environment.
 
 ## browser-app
 
@@ -11,21 +12,49 @@ After the image is built, `run.sh` executes the image which copies the build out
 
 An nginx config example for hosting the browser-app is shown below.
 
-```text
+```nginx
 TODO
-
 ```
 
 ## ln-ws-proxy
 
-The structure for `ln-ws-proxy` is a bit simpler. The `ln-ws-proxy` is long-running server-side process. When run, the `ln-ws-proxy/run.sh` script builds the image file for the project then executes a long-running process which listens at `127.0.0.1:3000/tcp`. Note! If you run host firewall, check your rules to ensure the port is permitted from localhost.
+The `ln-ws-proxy` is long-running server-side process. When run, the `ln-ws-proxy/run.sh` script builds the image file for the project then executes a long-running process which listens at `127.0.0.1:3000/tcp`. Note! If you run host firewall, check your rules to ensure the port is permitted from localhost.
 
-### nging config
+### nginx config
 
-An nginx config example for hosting the browser-app is shown below.
+The nginx config below demonstrates how to terminate the WebSocket connection and proxy the requests to the `ln-ws-proxy` service.
 
-```text
-TODO
+```nginx
+# HTTP redirect to HTTPS
+server {
+        listen 80 default_server;
+        listen [::]:80 default_server;
+        server_name wsproxy.domain.tld;
+        return 301
+
+        https://$server_name$request_uri;
+}
+
+# Virtual Host/SSL/Reverse proxy configuration for example.com
+server {
+        listen 443 ssl;
+        ssl_certificate <PATH_TO_CERTIFICATE>
+        ssl_certificate_key <PATH_TO_CERTIFICATE_KEY>
+        include <PATH_TO_SSL_CONF>
+        ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+        server_name wsproxy.domain.tld;
+
+        location / {
+                # 127.0.0.1:3000 is the ln-ws-proxy service.
+                proxy_pass http://127.0.0.1:3000;
+                proxy_http_version 1.1;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection 'upgrade';
+                proxy_set_header Host $host;
+                proxy_cache_bypass $http_upgrade;
+        }
+}
 
 ```
 
