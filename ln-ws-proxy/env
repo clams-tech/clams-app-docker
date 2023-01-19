@@ -1,3 +1,4 @@
 REPO_NAME=ln-ws-proxy
-REPO_URL=https://github.com/farscapian/ln-ws-proxy.git
+REPO_URL=https://github.com/clams-tech/ln-ws-proxy.git
+#https://github.com/farscapian/ln-ws-proxy.git
 GIT_TAG=0.05
