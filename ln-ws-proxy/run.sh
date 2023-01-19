@@ -18,7 +18,7 @@ fi
 
 # build the dockerfile.
 docker pull node:latest
-docker build  --build-arg GIT_REPO_URL="$REPO_URL" --build-arg VERSION="$GIT_TAG" -t "$REPO_NAME":"$GIT_TAG" .
+docker build --build-arg GIT_REPO_URL="$REPO_URL" --build-arg VERSION="$GIT_TAG" -t "$REPO_NAME":"$GIT_TAG" .
 
 # run the image, which by default copies the build output to /output in the container
 # /output is mounted to a local host directory.

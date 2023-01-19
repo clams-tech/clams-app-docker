@@ -45,6 +45,6 @@ mkdir "$OUTPUT_DIR"
 
 # run the image, which by default copies the build output to /output in the container
 # /output is mounted to a local host directory.
-docker run -it --rm --user "$UID:$UID" -v "$OUTPUT_DIR":/output --name browser-app "$REPO_NAME":"$GIT_TAG"
+docker run -t --rm --user "$UID:$UID" -v "$OUTPUT_DIR":/output --name browser-app "$REPO_NAME":"$GIT_TAG"
 
 echo "Your static files for Clams browser app can be found at ${OUTPUT_DIR}"

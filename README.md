@@ -1,5 +1,5 @@
 # clams-app-docker
-Docker resources for hosting Clams App easily
+Docker resources for hosting Clams App easily. This repo allows you to quick get the necessary build artifacts so you can self-host your own Clams app in a docker environment.
 
 ## browser-app
 
@@ -28,3 +28,7 @@ An nginx config example for hosting the browser-app is shown below.
 TODO
 
 ```
+
+## env files
+
+Go look at the env files in the subdirectories. You can update the values here so you can build a specific fork of the app. You can update the GIT tag to target a specific version. This is useful when you are working on a fork of the project.

@@ -1,4 +1,4 @@
-FROM node:latest
+FROM node:18
 
 ARG GIT_REPO_URL
 ARG VERSION
