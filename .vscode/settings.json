@@ -1,0 +1,37 @@
+{
+    "editor.renderWhitespace": "boundary",
+    "editor.tabSize": 4,
+    "editor.detectIndentation": false,
+    "editor.insertSpaces": true,
+    "editor.cursorBlinking": "phase",
+    "editor.cursorWidth": 3,
+    "editor.formatOnSave": true,
+    "shellcheck.enable": true,
+    "shellcheck.enableQuickFix": true,
+    "shellcheck.run": "onType",
+    "shellcheck.executablePath": "shellcheck",
+    "shellcheck.customArgs": [
+        "-x"
+    ],
+    "shellcheck.ignorePatterns": {},
+    "shellcheck.exclude": [
+        // "SC1090",
+        // "SC1091",
+        "SC2029"
+    ],
+    "terminal.integrated.fontFamily": "monospace",
+    "workbench.colorCustomizations": {
+        "activityBar.background": "#1900a565",
+        "activityBar.foreground": "#e7e7e7",
+        "activityBar.inactiveForeground": "#e7e7e799",
+        "activityBarBadge.background": "#7143fc",
+        "activityBarBadge.foreground": "#e7e7e7",
+        "titleBar.activeBackground": "#029727",
+        "titleBar.inactiveBackground": "#02972799",
+        "titleBar.activeForeground": "#e7e7e7",
+        "titleBar.inactiveForeground": "#e7e7e799",
+        "statusBar.background": "#ff0000",
+        "statusBarItem.hoverBackground": "#ff0000",
+        "statusBar.foreground": "#000000"
+    }
+}

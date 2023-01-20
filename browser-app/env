@@ -1,0 +1,3 @@
+REPO_NAME=browser-app
+REPO_URL=https://github.com/clams-tech/browser-app.git
+GIT_TAG=1.3.0
