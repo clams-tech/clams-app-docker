@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-set -ex
+set -e
 cd "$(dirname "$0")"
 
 # shellcheck source=./env
