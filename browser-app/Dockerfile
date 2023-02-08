@@ -9,6 +9,10 @@ RUN apt-get update && apt-get install tzdata -y
 ENV TZ="America/New_York"
 RUN npm install -g npm@9.3.0
 
+RUN mkdir /output
+VOLUME /output
+RUN mkdir /browser-app
+
 # Clone the repository
 RUN git clone $GIT_REPO_URL /browser-app
 
@@ -22,9 +26,6 @@ RUN yarn
 
 # build the project.
 RUN yarn build
-
-RUN mkdir /output
-VOLUME /output
 
 # This command copies everything from 
 ENTRYPOINT [ "cp", "-a", "/browser-app/build/.", "/output/" ]
