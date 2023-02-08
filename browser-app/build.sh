@@ -18,8 +18,6 @@ fi
 # pull the base image from dockerhub and build the ./Dockerfile.
 docker build --build-arg GIT_REPO_URL="$REPO_URL" \
   --build-arg VERSION="$GIT_TAG" \
-  --build-arg UID="$UID" \
-  --build-arg GUID="$UID" \
   -t browser-app:"$GIT_TAG" \
   .
 
