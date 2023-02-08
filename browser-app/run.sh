@@ -1,10 +1,7 @@
 #!/bin/bash
 
-set -e
+set -ex
 cd "$(dirname "$0")"
-
-# shellcheck source=./env
-source ./env
 
 OUTPUT_DIR="$(pwd)/www-root"
 
@@ -22,16 +19,8 @@ for i in "$@"; do
     esac
 done
 
-if docker ps | grep -q "$REPO_NAME"; then
-    docker kill "$REPO_NAME"
-fi
-
-if docker ps -a | grep -q "$REPO_NAME"; then
-    docker system prune -f
-fi
-
-# pull the base image from dockerhub and build the ./Dockerfile.
-docker build --build-arg GIT_REPO_URL="$REPO_URL" --build-arg VERSION="$GIT_TAG" -t browser-app:"$GIT_TAG" .
+# shellcheck source=./env
+source ./env
 
 # If the existing output directory exists, we delete it so we can get fresh files.
 if [ -d "$OUTPUT_DIR" ]; then
@@ -39,11 +28,8 @@ if [ -d "$OUTPUT_DIR" ]; then
     echo "INFO: Your existing output files have been deleted."
 fi
 
-echo "Creating '$OUTPUT_DIR'."
-mkdir "$OUTPUT_DIR"
+./build.sh
 
-# run the image, which by default copies the build output to /output in the container
-# /output is mounted to a local host directory.
-docker run -t --rm --user "$UID:$UID" -v "$OUTPUT_DIR":/output --name browser-app "$REPO_NAME":"$GIT_TAG"
+mkdir -p "$OUTPUT_DIR"
 
-echo "Your static files for Clams browser app can be found at ${OUTPUT_DIR}"
+docker run -t --rm --user "$UID:$UID" -v "$OUTPUT_DIR":/output --name browser-app browser-app:"$GIT_TAG"
