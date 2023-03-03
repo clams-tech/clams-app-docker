@@ -20,16 +20,24 @@ for i in "$@"; do
 done
 
 # shellcheck source=./env
-source ./env
+. ./.env
 
-# If the existing output directory exists, we delete it so we can get fresh files.
-if [ -d "$OUTPUT_DIR" ]; then
-    rm -rf "$OUTPUT_DIR"
-    echo "INFO: Your existing output files have been deleted."
-fi
-
+# build the docker image.
 ./build.sh
 
-mkdir -p "$OUTPUT_DIR"
+# If the existing output directory exists, we delete it so we can get fresh files.
+if [ ! -d "$OUTPUT_DIR" ]; then
+    mkdir -p "$OUTPUT_DIR"
 
-docker run -t --rm --user "$UID:$UID" -v "$OUTPUT_DIR":/output --name browser-app browser-app:"$GIT_TAG"
+fi
+
+IMAGE_NAME="browser-app:$GIT_TAG"
+
+# if the image is built, execute it and we get our output.
+if docker image list --format "{{.Repository}}:{{.Tag}}" | grep -q "$IMAGE_NAME"; then
+    docker run -t --rm --user "$UID:$UID" -v "$OUTPUT_DIR":/output --name browser-app browser-app:"$GIT_TAG"
+fi
+
+# bring the nginx container up to expose the Clams Browser App service.
+docker compose up -d 
+echo "The Clams Browser App is available at http://${BROWSER_APP_BIND_ADDR}:${BROWSER_APP_PORT}"

@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  nginx:
+    container_name: nginx_lnproxy
+    image: nginx:latest
+    restart: always
+    ports:
+      - "${LN_WS_PROXY_BIND_ADDR:-127.0.0.1}:${LN_WS_PROXY_EXTERNAL_PORT:-3000}:3000"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+
+  ln-ws-proxy:
+    container_name: ln-ws-proxy
+    image: "ln-ws-proxy:${GIT_TAG}"
+    restart: always
+    expose:
+      - '3000'
