@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ex
+set -e
 cd "$(dirname "$0")"
 
 OUTPUT_DIR=
@@ -72,7 +72,6 @@ touch "$NGINX_CONFIG_PATH"
 
 
 docker volume create clams-certs
-docker volume create clams-certlogs
 
 # bring the nginx container up to expose the Clams Browser App service.
 docker compose up -d
