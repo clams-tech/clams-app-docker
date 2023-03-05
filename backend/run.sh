@@ -28,18 +28,15 @@ export IS_TESTNET="$IS_TESTNET"
 export CLIGHTNING_CHAIN="$CLIGHTNING_CHAIN"
 export BITCOIND_RPC_PORT="$BITCOIND_RPC_PORT"
 
-WEBSOCKET_PORT_LOCAL=
-P2P_PORT_PORT=9735
-CLIGHTNING_LOCAL_BIND_ADDR=
+WEBSOCKET_PORT_LOCAL=9736
+CLIGHTNING_P2P_PORT=9735
+CLIGHTNING_LOCAL_BIND_ADDR="127.0.0.1"
 if [ "$ENABLE_TLS" = false ]; then
     WEBSOCKET_PORT_LOCAL="$CLIGHTNING_WEBSOCKET_EXTERNAL_PORT"
-    P2P_PORT_PORT="$CLIGHTNING_P2P_EXTERNAL_PORT"
-else
-    WEBSOCKET_PORT_LOCAL=9736
-    CLIGHTNING_LOCAL_BIND_ADDR="127.0.0.1"
+    CLIGHTNING_P2P_PORT="$CLIGHTNING_P2P_EXTERNAL_PORT"
 fi
 
-export P2P_PORT_PORT="$P2P_PORT_PORT"
+export CLIGHTNING_P2P_PORT="$CLIGHTNING_P2P_PORT"
 export WEBSOCKET_PORT_LOCAL="$WEBSOCKET_PORT_LOCAL"
 export CLIGHTNING_LOCAL_BIND_ADDR="$CLIGHTNING_LOCAL_BIND_ADDR"
 
@@ -58,8 +55,10 @@ until docker ps | grep -q clams-bitcoind; do
     sleep 0.1;
 done;
 
-# get the bitcoind container then load a wallet and generate some blocks
-bash -c "../bitcoin-cli.sh createwallet Clams" 
-#> /dev/null 2>&1
-bash -c "../bitcoin-cli.sh -generate 5"
-#> /dev/null 2>&1
+
+bash -c "../bitcoin-cli.sh createwallet clams-$BTC_CHAIN" > /dev/null 2>&1
+if [ "$BTC_CHAIN" = regtest ]; then
+    # create an on-chain wallet and progress some blocks.
+    
+    bash -c "../bitcoin-cli.sh -generate 5" > /dev/null 2>&1
+fi

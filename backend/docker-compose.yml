@@ -37,7 +37,7 @@ services:
       - '9735'
       - '9736'
     ports:
-      - '${BIND_ADDR:-127.0.0.1}:${P2P_PORT_PORT:-9735}:9735'
+      - '${BIND_ADDR:-127.0.0.1}:${CLIGHTNING_P2P_PORT:-9735}:9735'
       - '${CLIGHTNING_LOCAL_BIND_ADDR:-127.0.0.1}:${WEBSOCKET_PORT_LOCAL:-9736}:9736'
 
 networks:
