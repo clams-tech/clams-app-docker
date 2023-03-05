@@ -4,7 +4,7 @@ set -e
 cd "$(dirname "$0")"
 
 . ./.env
-#
+
 if docker ps -a | grep -q clams-bitcoind; then
     docker exec -it -u "$UID:$UID" clams-bitcoind bitcoin-cli -"$BTC_CHAIN" "$@"
 else

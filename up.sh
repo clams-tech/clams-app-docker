@@ -42,6 +42,10 @@ if [ "$ENABLE_TLS" = true ] && [ "$CLAMS_FQDN" = localhost ]; then
     exit 1
 fi
 
+# note, this ONLY checks the resolveability of the CLAMS_FQDN from the hosts-perspective
+# if the host is configured to use internetal DNS server, then the name MUST resolve to an
+# internal IP address. 
+# We DO NOT check public DNS entries to validate global resolvability (letsencrypt does that though)
 if ! dig +short "$CLAMS_FQDN" | grep -q "$BIND_ADDR"; then
     if [ "$BIND_ADDR" != "0.0.0.0" ]; then
         echo "ERROR: '$CLAMS_FQDN' does not resolve to '$BIND_ADDR'. Check your settings."
@@ -77,7 +81,7 @@ export BTC_CHAIN="$BTC_CHAIN"
 export CLIGHTNING_WEBSOCKET_EXTERNAL_PORT="$CLIGHTNING_WEBSOCKET_EXTERNAL_PORT"
 export DEPLOY_BTC_BACKEND="$DEPLOY_BTC_BACKEND"
 export ENABLE_TLS="$ENABLE_TLS"
-export LIGHTNING_P2P_EXTERNAL_POR="$CLIGHTNING_P2P_EXTERNAL_PORT"
+export LIGHTNING_P2P_EXTERNAL_PORT="$CLIGHTNING_P2P_EXTERNAL_PORT"
 export DEPLOY_LN_WS_PROXY="$DEPLOY_LN_WS_PROXY"
 export LN_WS_PROXY_HOSTNAME="$LN_WS_PROXY_HOSTNAME"
 export BROWSER_APP_EXTERNAL_PORT="$BROWSER_APP_EXTERNAL_PORT"
