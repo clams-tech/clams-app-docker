@@ -11,6 +11,9 @@ ENV HOST=0.0.0.0
 ENV PORT=3000
 #ENV RESTRICT_ORIGINS=
 
+# bump the npm version to avoid notices
+RUN npm install -g npm@9.6.0
+
 # Clone the repository
 RUN git clone $GIT_REPO_URL /ln-ws-proxy
 

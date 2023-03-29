@@ -1,13 +1,9 @@
-FROM node:18-buster
+FROM node:19.7
 
 ARG GIT_REPO_URL
 ARG VERSION
 
 ENV VERSION=$VERSION
-
-RUN apt-get update && apt-get install tzdata -y
-ENV TZ="America/New_York"
-RUN npm install -g npm@9.3.0
 
 RUN mkdir /output
 VOLUME /output
