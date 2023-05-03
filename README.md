@@ -28,3 +28,8 @@ The output of `./up.sh` provides you with useful information like service endpoi
 # TODO
 
 1. Add option for creating QR codes that contain NODE_URI+RUNE information so they can be printed on a postcard. Then clams browser app could scan that BASE64 encoded URI as query string parameters.
+
+
+## notes
+
+Integrate suggestions from [this blog post](https://blog.mutinywallet.com/mutinynet/).

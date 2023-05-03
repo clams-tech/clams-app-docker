@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ex
+set -e
 cd "$(dirname "$0")"
 
 # # build the ln-ws-app if we're deploying it.
