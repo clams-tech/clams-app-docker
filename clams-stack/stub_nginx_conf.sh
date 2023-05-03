@@ -78,13 +78,13 @@ cat >> "$NGINX_CONFIG_PATH" <<EOF
 
 EOF
 
-# CLN listens on
-STARTING_CLN_PORT=9736
+STARTING_WEBSOCKET_PORT=9736
 
 # write out service for CLN; style is a docker stack deploy style,
 # so we will use the replication feature
 for (( CLN_ID=0; CLN_ID<$CLN_COUNT; CLN_ID++ )); do
     CLN_ALIAS="cln-${CLN_ID}"
+    CLN_WEBSOCKET_PORT=$(( $STARTING_WEBSOCKET_PORT+$CLN_ID ))
     cat >> "$NGINX_CONFIG_PATH" <<EOF
     map \$http_upgrade \$connection_upgrade {
         default upgrade;
@@ -94,7 +94,7 @@ for (( CLN_ID=0; CLN_ID<$CLN_COUNT; CLN_ID++ )); do
     # server block for the clightning websockets path;
     # this server block terminates TLS sessions and passes them to ws://.
     server {
-        listen 9736${SSL_TAG};
+        listen ${CLN_WEBSOCKET_PORT}${SSL_TAG};
 
         server_name ${CLAMS_FQDN};
 

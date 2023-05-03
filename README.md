@@ -21,7 +21,7 @@ If you want to run signet, set BTC_CHAIN=signet in .env. By default this runs th
 
 You can deploy multiple cln nodes if you desire. (This could be useful useful for classroom settings). All cln nodes that get deployed use the same bitcoin backend, and everything is configured to run the same `BTC_CHAIN`. All CLN nodes are configured to listen using the experimental websocket feature and are exposed on different ports at the reverse proxy. All services are ultimately exposed by a single `nginx` container that exposes tcp/80 and tcp/443.
 
-For example, if you deploy 3 CLN nodes, you be able to access their respective websocket interfaces at `wss://CLAMS_HOST:((9736+$CLN_ID))`.
+If you deploy three CLN nodes, you be able to access their respective websocket interfaces at `wss://CLAMS_HOST:((9736+$CLN_ID))`.
 
 > When `ENABLE_TLS=true` you MUST forward ports 80/tcp and 443/tcp during certificate issuance and renewal (i.e., PUBLIC->IP_ADDRESS:80/443) for everything to work.
 

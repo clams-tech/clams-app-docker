@@ -78,10 +78,16 @@ BTC_CHAIN="$BTC_CHAIN" ./clams-stack/run.sh
 # the entrypoint is http in all cases; if ENABLE_TLS=true, then we rely on the 302 redirect to https.
 echo "The Clams Browser App is available at http://${CLAMS_FQDN}:${BROWSER_APP_EXTERNAL_PORT}"
 
-# now let's output the core lightning node URI so the user doesn't need to fetch that manually.
 
-echo "Your core-lightning websocket \"Direct Connection (ws)\" URI is: "
-./get_node_uri.sh
+for (( CLN_ID=0; CLN_ID<$CLN_COUNT; CLN_ID++ )); do
+    CLN_ALIAS="cln-${CLN_ID}"
+    CLN_WEBSOCKET_PORT=$(( $STARTING_WEBSOCKET_PORT+$CLN_ID ))
+    # now let's output the core lightning node URI so the user doesn't need to fetch that manually.
+    CLN_NODE_URI=$(bash -c ./get_node_uri.sh)
+    echo "Your core-lightning websocket \"Direct Connection (ws)\" URI is: "
+    ./get_node_uri.sh
+done
+
 
 SESSION_ID=
 read -r -e -p "Paste the Clams session ID and press enter:  " SESSION_ID
