@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ex
+set -e
 cd "$(dirname "$0")"
 
 . ./defaults.env
@@ -9,7 +9,6 @@ cd "$(dirname "$0")"
 CLN_ID=0
 
 # TODO add argument to specify CLN NODE ID
-
 
 if docker ps | grep -q "clams-stack_cln-${CLN_ID}"; then
     CLN_CONTAINER_ID="$(docker ps | grep "clams-stack_cln-${CLN_ID}" | head -n1 | awk '{print $1;}')"
