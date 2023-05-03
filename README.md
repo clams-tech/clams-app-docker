@@ -14,7 +14,7 @@ By updating [`./.env`](./.env), you can override anything specified in [`./defau
 
 ## scaling CLN Nodes
 
-You can deploy multiple cln nodes if you desire. (This could be useful useful for classroom settings). All cln nodes that get deployed use the same bitcoin backend, and everything is configured to run the same `BTC_CHAIN`. All CLN nodes are configured to listen using the experimental websocket feature and are exposed on different ports in at the reverse proxy. All services are ultimately exposed by a single `nginx` container that exposes tcp/80 and tcp/443.
+You can deploy multiple cln nodes if you desire. (This could be useful useful for classroom settings). All cln nodes that get deployed use the same bitcoin backend, and everything is configured to run the same `BTC_CHAIN`. All CLN nodes are configured to listen using the experimental websocket feature and are exposed on different ports at the reverse proxy. All services are ultimately exposed by a single `nginx` container that exposes tcp/80 and tcp/443.
 
 For example, if you deploy 3 CLN nodes, you be able to access their respective websocket interfaces at `wss://CLAMS_HOST:((9736+$CLN_ID))`.
 
