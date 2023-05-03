@@ -6,15 +6,17 @@ This repo allows you get Clams running quickly in a [modern docker engine](https
 
 * [`./up.sh`](./up.sh) - brings up your Clams infrastructure according to [`./.env`](./.env).
 * [`./down.sh`](./down.sh) - brings your Clams infrastructure down in a non-destructive way.
-* [`./reset.sh`](./reset.sh) - this is just a non-destructuve `down.s.
+* [`./reset.sh`](./reset.sh) - this is just a non-destructuve `down.sh`, the `up.sh`. Just save a step.
 
 If you leave [`./.env`](./.env) unmodified, you will get a single bitcoind and a single core lightning node running on regtest. In addition, the clams [browser-app](https://github.com/clams-tech/browser-app) becomes available on port 80/443. You backend primed to accept RPC calls using the websocket interface available on core lightning.
 
-By updating [`./.env`](./.env), you can override anything specified in [`./defaults.env`](./defaults.env). The most important are the Global Settings. From here you can specify WHETHER to deploy TLS and if so, the [`fqdn`](https://en.wikipedia.org/wiki/Fully_qualified_domain_name) of the clams host (CLAMS_FQDN). Since we are using docker stacks, services are exposed on ALL IP addresses (so you cannot specify a bind address).
+By updating [`./.env`](./.env), you can override anything specified in [`./defaults.env`](./defaults.env). The most important are the Global Settings. From here you can specify WHETHER to deploy TLS and if so, the [`fqdn`](https://en.wikipedia.org/wiki/Fully_qualified_domain_name) of the clams host (CLAMS_FQDN). Since we are using docker stacks, services are exposed on ALL IP addresses (so you cannot specify a bind address). This is usually fine if you're running a dedicated VM in the cloud, but if you're self-hosting, ensure the host is isolated on a DMZ.
 
 ## scaling CLN Nodes
 
-You can deploy multiple cln nodes if you desire. (This could be useful useful for classroom settings). All cln nodes that get deployed use the same bitcoin backend, and everything is configured to run the same `BTC_CHAIN`. All CLN nodes are configured to listen using the experimental websocket feature. All services are ultimately exposed by a single `nginx` container that exposes tcp/80 and tcp/443.
+You can deploy multiple cln nodes if you desire. (This could be useful useful for classroom settings). All cln nodes that get deployed use the same bitcoin backend, and everything is configured to run the same `BTC_CHAIN`. All CLN nodes are configured to listen using the experimental websocket feature and are exposed on different ports in at the reverse proxy. All services are ultimately exposed by a single `nginx` container that exposes tcp/80 and tcp/443.
+
+For example, if you deploy 3 CLN nodes, you be able to access their respective websocket interfaces at `wss://CLAMS_HOST:((9736+$CLN_ID))`.
 
 > When `ENABLE_TLS=true` you MUST forward ports 80/tcp and 443/tcp during certificate issuance and renewal (i.e., PUBLIC->IP_ADDRESS:80/443) for everything to work.
 
