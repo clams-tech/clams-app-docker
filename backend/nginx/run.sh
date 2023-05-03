@@ -19,32 +19,6 @@ for i in "$@"; do
     esac
 done
 
-# check to see if we have certificates
-if [ "$ENABLE_TLS" = true ]; then
-    ./getrenew_cert.sh
-fi
-
-BROWSER_APP_IMAGE_NAME="browser-app:$BROWSER_APP_GIT_TAG"
-
-# build the browser-app image.
-# pull the base image from dockerhub and build the ./Dockerfile.
-if ! docker image list --format "{{.Repository}}:{{.Tag}}" | grep -q "$BROWSER_APP_IMAGE_NAME"; then
-    docker build --build-arg GIT_REPO_URL="$BROWSER_APP_GIT_REPO_URL" \
-    --build-arg VERSION="$BROWSER_APP_GIT_TAG" \
-    -t "$BROWSER_APP_IMAGE_NAME" \
-    ./browser-app/
-fi
-
-
-# create a volume to hold the browser app build output
-if docker volume list | grep -q "clams-browser-app"; then
-    docker volume delete clams-browser-app
-fi
-
-docker volume create clams-browser-app
-
-# if the image is built, execute it and we get our output
-docker run -t --rm --user "$UID:$UID" -v "$OUTPUT_DIR":/output --name browser-app "$BROWSER_APP_IMAGE_NAME"
 
 # # build the ln-ws-app if we're deploying it.
 # LN_WS_PROXY_IMAGE_NAME="ln-ws-proxy:$LN_WS_PROXY_GIT_TAG"
@@ -60,17 +34,3 @@ docker run -t --rm --user "$UID:$UID" -v "$OUTPUT_DIR":/output --name browser-ap
 # stub out the nginx config
 NGINX_CONFIG_PATH="$(pwd)/nginx.conf"
 export NGINX_CONFIG_PATH="$NGINX_CONFIG_PATH"
-
-touch "$NGINX_CONFIG_PATH"
-
-# create the nginx.conf file.
-./stub_nginx_conf.sh
-
-# now build the docker-compose.yml file
-./stub_docker_compose.sh
-
-
-docker volume create clams-certs
-
-# bring the nginx container up to expose the Clams Browser App service.
-#docker compose up -d

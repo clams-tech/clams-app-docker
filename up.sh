@@ -44,23 +44,6 @@ fi
 
 echo "INFO: You are targeting '$BTC_CHAIN'"
 
-# note, this ONLY checks the resolveability of the CLAMS_FQDN from the hosts-perspective
-# if the host is configured to use internetal DNS server, then the name MUST resolve to an
-# internal IP address. 
-# We DO NOT check public DNS entries to validate global resolvability (letsencrypt does that though)
-if ! dig +short "$CLAMS_FQDN" | grep -q "$BIND_ADDR"; then
-    if [ "$BIND_ADDR" != "0.0.0.0" ]; then
-        echo "ERROR: '$CLAMS_FQDN' does not resolve to '$BIND_ADDR'. Check your settings."
-        exit 1
-    fi
-fi
-
-if [ "$ENABLE_TLS" = false ] && [ "$BIND_ADDR" != "127.0.0.1" ]; then
-    echo "ERROR: when TLS is disabled, BIND_ADDR MUST be 127.0.0.1."
-    echo "       doing otherwise could lead to insecure deployments."
-    exit 1
-fi
-
 if [ "$ENABLE_TLS" = true ] && [ "$DEPLOY_LN_WS_PROXY" = true ] && [ "$LN_WS_PROXY_HOSTNAME" = localhost ]; then
     echo "ERROR: You MUST set LN_WS_PROXY_HOSTNAME to a hostname resolveable in the DNS."
     exit 1
@@ -72,7 +55,6 @@ if [ "$BTC_CHAIN" != regtest ] && [ "$BTC_CHAIN" != signet ] && [ "$BTC_CHAIN" !
 fi
 
 export CLAMS_FQDN="$CLAMS_FQDN"
-export BIND_ADDR="$BIND_ADDR"
 export BTC_CHAIN="$BTC_CHAIN"
 export CLIGHTNING_WEBSOCKET_EXTERNAL_PORT="$CLIGHTNING_WEBSOCKET_EXTERNAL_PORT"
 
@@ -124,9 +106,7 @@ if [ "$ENABLE_TLS" = true ]; then
     PROTOCOL=wss
 fi
 # the entrypoint is http in all cases; if ENABLE_TLS=true, then we rely on the 302 redirect to https.
-echo "Your lightning websocket enpoint can be found at '$PROTOCOL://$BIND_ADDR:$CLIGHTNING_WEBSOCKET_EXTERNAL_PORT'."
-
-
+echo "Your lightning websocket endpoint can be found at '$PROTOCOL://0.0.0.0:$CLIGHTNING_WEBSOCKET_EXTERNAL_PORT'."
 
 if [ "$DEPLOY_LN_WS_PROXY" = true ]; then
     PROTOCOL=ws

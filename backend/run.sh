@@ -81,5 +81,34 @@ fi
 
 
 
-docker stack deploy -c docker-compose.yml clams-stack
 
+# create a volume to hold the browser app build output
+if docker volume list | grep -q "clams-browser-app"; then
+    docker volume rm clams-browser-app
+fi
+
+docker volume create clams-browser-app
+
+
+BROWSER_APP_IMAGE_NAME="browser-app:$BROWSER_APP_GIT_TAG"
+
+# build the browser-app image.
+# pull the base image from dockerhub and build the ./Dockerfile.
+if ! docker image list --format "{{.Repository}}:{{.Tag}}" | grep -q "$BROWSER_APP_IMAGE_NAME"; then
+    docker build --build-arg GIT_REPO_URL="$BROWSER_APP_GIT_REPO_URL" \
+    --build-arg VERSION="$BROWSER_APP_GIT_TAG" \
+    -t "$BROWSER_APP_IMAGE_NAME" \
+    ./browser-app/
+fi
+
+# if the image is built, execute it and we get our output
+docker run -t --rm -v clams-browser-app:/output --name browser-app "$BROWSER_APP_IMAGE_NAME"
+
+docker volume create clams-certs
+
+# check to see if we have certificates
+if [ "$ENABLE_TLS" = true ]; then
+    ./getrenew_cert.sh
+fi
+
+docker stack deploy -c docker-compose.yml clams-stack

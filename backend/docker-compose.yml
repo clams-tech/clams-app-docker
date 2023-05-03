@@ -5,11 +5,14 @@ services:
     image: nginx:latest
     ports:
       - 80:80
+      - 443:443
+      - "9736:9863"
     configs:
       - source: nginx-config
         target: /etc/nginx/nginx.conf
     volumes:
       - clams-browser-app:/browser-app
+      - certs:/certs
 
   bitcoind:
     image: polarlightning/bitcoind:24.0
@@ -52,7 +55,11 @@ volumes:
   clams-browser-app:
     external: true
     name: clams-browser-app
+  certs:
+    external: true
+    name: clams-certs
 
 configs:
   nginx-config:
     file: /home/farscapian/github/farscapian/clams-app-docker/backend/nginx.conf
+
