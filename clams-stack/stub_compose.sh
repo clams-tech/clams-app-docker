@@ -38,12 +38,15 @@ if [ "$ENABLE_TLS" = true ]; then
 EOF
 fi
 
-if [ "$ENABLE_TLS" = true ]; then
-    cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
-      - "${CLIGHTNING_WEBSOCKET_EXTERNAL_PORT:-7272}:9863"
-EOF
-fi
+STARTING_WEBSOCKET_PORT=9736
 
+# these are the ports for the websocket connections.
+for (( CLN_ID=0; CLN_ID<$CLN_COUNT; CLN_ID++ )); do
+    CLN_WEBSOCKET_PORT=$(( $STARTING_WEBSOCKET_PORT+$CLN_ID ))
+    cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
+      - ${CLN_WEBSOCKET_PORT}:9736
+EOF
+done
 
 cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
     networks:
@@ -70,9 +73,6 @@ if [ "$ENABLE_TLS" = true ]; then
 EOF
 fi
 
-
-
-
 cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
 
   bitcoind:
@@ -97,14 +97,6 @@ cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
       mode: global
 
 EOF
-
-
-
-
-
-
-
-
 
 # write out service for CLN; style is a docker stack deploy style,
 # so we will use the replication feature

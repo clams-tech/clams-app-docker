@@ -32,4 +32,4 @@ The output of `./up.sh` provides you with useful information like service endpoi
 
 ## notes
 
-Integrate suggestions from [this blog post](https://blog.mutinywallet.com/mutinynet/).
+Integrate suggestions from for creating a private signet [this blog post](https://blog.mutinywallet.com/mutinynet/).

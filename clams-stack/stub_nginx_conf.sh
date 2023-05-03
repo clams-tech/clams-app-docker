@@ -45,9 +45,9 @@ EOF
 
 # else
 
-#     cat >> "$NGINX_CONFIG_PATH" <<EOF
-#     resolver 127.0.0.11;
-# EOF
+    cat >> "$NGINX_CONFIG_PATH" <<EOF
+    resolver 127.0.0.11;
+EOF
 
 fi
 
@@ -85,8 +85,7 @@ STARTING_CLN_PORT=9736
 # so we will use the replication feature
 for (( CLN_ID=0; CLN_ID<$CLN_COUNT; CLN_ID++ )); do
     CLN_ALIAS="cln-${CLN_ID}"
-    if [ "$ENABLE_TLS" = true ]; then
-        cat >> "$NGINX_CONFIG_PATH" <<EOF
+    cat >> "$NGINX_CONFIG_PATH" <<EOF
     map \$http_upgrade \$connection_upgrade {
         default upgrade;
         '' close;
@@ -95,7 +94,7 @@ for (( CLN_ID=0; CLN_ID<$CLN_COUNT; CLN_ID++ )); do
     # server block for the clightning websockets path;
     # this server block terminates TLS sessions and passes them to ws://.
     server {
-        listen 9863${SSL_TAG};
+        listen 9736${SSL_TAG};
 
         server_name ${CLAMS_FQDN};
 
@@ -115,7 +114,6 @@ for (( CLN_ID=0; CLN_ID<$CLN_COUNT; CLN_ID++ )); do
 
 EOF
 
-    fi
 done
 
 
