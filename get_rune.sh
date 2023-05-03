@@ -2,7 +2,7 @@
 
 set -e
 
-RUNE_TYPE="read-only"
+RUNE_TYPE="admin"
 SESSION_ID=
 
 # grab any modifications from the command line.
