@@ -1,14 +1,9 @@
 #!/bin/bash
 
-set -e
+set -ex
 cd "$(dirname "$0")"
 
-
-# clear the nginx.conf if it exists.
-echo "" > "$NGINX_CONFIG_PATH" 
-
-if [ "$OUTPUT_NGINX_FRAGMENTS" = true ]; then
-    cat >> "$NGINX_CONFIG_PATH" <<EOF
+cat > "$NGINX_CONFIG_PATH" <<EOF
 events {
     worker_connections 1024;
 }
@@ -18,7 +13,6 @@ http {
     sendfile on;
 
 EOF
-fi
 
 if [ "$ENABLE_TLS" = true ]; then
 
@@ -85,7 +79,7 @@ cat >> "$NGINX_CONFIG_PATH" <<EOF
 EOF
 
 
-if [ "$DEPLOY_BTC_BACKEND" = true ] && [ "$ENABLE_TLS" = true ]; then
+if [ "$ENABLE_TLS" = true ]; then
     cat >> "$NGINX_CONFIG_PATH" <<EOF
     map \$http_upgrade \$connection_upgrade {
         default upgrade;
@@ -137,7 +131,6 @@ if [ "$DEPLOY_LN_WS_PROXY" = true ]; then
             proxy_cache_bypass \$http_upgrade;
         }
     }
-
 
 EOF
 fi

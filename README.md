@@ -13,5 +13,3 @@ By updating [`./.env`](./.env), you can override anything specified in [`./defau
 > When `ENABLE_TLS=true` you MUST forward ports 80/tcp and 443/tcp during certificate issuance and renewal (i.e., PUBLIC->BIND_ADDR:80/443) for everything to work.
 
 The output of `./up.sh` provides you with useful information like service endpoints. The scripts also emit node URI from the core lightning node that gets deployed. This is the first piece of information you need when using the `browser-app`. The second piece of information you need is a functional rune. The script accepts a session ID (which the user copies from the [browser-app]) and produces a rune.
-
-> Warning: Bitcoin `mainnet` is NOT SUPPORTED at this time.

@@ -1,55 +1,58 @@
-version: '3.9'
+version: '3.8'
 services:
+
+  reverse-proxy:
+    image: nginx:latest
+    ports:
+      - 80:80
+    configs:
+      - source: nginx-config
+        target: /etc/nginx/nginx.conf
+    volumes:
+      - clams-browser-app:/browser-app
+
   bitcoind:
     image: polarlightning/bitcoind:24.0
-    container_name: clams-bitcoind
-    # environment:
-    #   USERID: ${USERID:-1000}
-    #   GROUPID: ${GROUPID:-1000}
     hostname: bitcoind
     networks:
       - bitcoindnet
     command: >-
-      bitcoind -server=1 -regtest=${IS_REGTEST:-1} -testnet=${IS_TESTNET:-0} -rpcauth=polaruser:5e5e98c21f5c814568f8b55d83b23c1c$$066b03f92df30b11de8e4b1b1cd5b1b4281aa25205bd57df9be82caf97a05526 -zmqpubrawblock=tcp://0.0.0.0:28334 -zmqpubrawtx=tcp://0.0.0.0:28335 -zmqpubhashblock=tcp://0.0.0.0:28336 -txindex=1 -upnp=0 -rpcbind=0.0.0.0 -rpcallowip=0.0.0.0/0 -rpcport=${BITCOIND_RPC_PORT:-18443} -rest -listen=1 -listenonion=0 -fallbackfee=0.0002
-    volumes:
-      - bitcoind:/home/bitcoin/.bitcoin
-    expose:
-      - '${BITCOIND_RPC_PORT:-18443}'
-      - '18444'
-      - '28334'
-      - '28335'
+      bitcoind -server=1 -rpcauth=polaruser:5e5e98c21f5c814568f8b55d83b23c1c$$066b03f92df30b11de8e4b1b1cd5b1b4281aa25205bd57df9be82caf97a05526 -zmqpubrawblock=tcp://0.0.0.0:28334 -zmqpubrawtx=tcp://0.0.0.0:28335 -zmqpubhashblock=tcp://0.0.0.0:28336 -txindex=1 -upnp=0 -rpcbind=0.0.0.0 -rpcallowip=0.0.0.0/0 -rpcport=18443 -rest -listen=1 -listenonion=0 -fallbackfee=0.0002 -mempoolfullrbf=1 -regtest
+    deploy:
+      mode: replicated
+      replicas: 1
 
-  clightning:
-    image: polarlightning/clightning:22.11
-    container_name: clams-clightning
-    hostname: clightning
+  cln-0:
+    image: roygbiv/cln:23.02.2
+    hostname: cln-0
     command: >-
-      lightningd --alias=clightning-${BTC_CHAIN:-regtest} --bind-addr=0.0.0.0 --announce-addr=${CLIGHTNING_LOCAL_BIND_ADDR:-localhost}:${CLIGHTNING_WEBSOCKET_EXTERNAL_PORT:-9736} --network=${BTC_CHAIN:-regtest} --bitcoin-rpcuser=polaruser --bitcoin-rpcpassword=polarpass --bitcoin-rpcconnect=clams-bitcoind --bitcoin-rpcport=${BITCOIND_RPC_PORT:-18443} --log-level=debug --dev-bitcoind-poll=20 --dev-fast-gossip --experimental-websocket-port=9736
-    restart: always
+      sh -c "chown 1000:1000 /opt/c-lightning-rest/certs && lightningd --alias=cln-regtest --bind-addr=0.0.0.0 --announce-addr=${CLIGHTNING_LOCAL_BIND_ADDR:-localhost}:${CLIGHTNING_WEBSOCKET_EXTERNAL_PORT:-9736} --bitcoin-rpcuser=polaruser --bitcoin-rpcpassword=polarpass --bitcoin-rpcconnect=bitcoind --bitcoin-rpcport=${BITCOIND_RPC_PORT:-18443} --log-level=debug --dev-bitcoind-poll=20 --dev-fast-gossip --experimental-websocket-port=9736 --plugin=/opt/c-lightning-rest/plugin.js --experimental-offers --network=regtest --network=regtest --network=regtest"
     volumes:
-      - clightning:/home/clightning/.lightning
+      - cln-0:/home/clightning/.lightning
+      - cln-0-certs:/opt/c-lightning-rest/certs
     networks:
-      - clightningnet
       - bitcoindnet
-    expose:
-      - '8080'
-      - '11001'
-      - '9735'
-      - '9736'
-    ports:
-      - '${BIND_ADDR:-127.0.0.1}:${CLIGHTNING_P2P_PORT:-9735}:9735'
-      - '${CLIGHTNING_LOCAL_BIND_ADDR:-127.0.0.1}:${WEBSOCKET_PORT_LOCAL:-9736}:9736'
+      - clnnet-0
+    deploy:
+      mode: replicated
+      replicas: 1
 
 networks:
   bitcoindnet:
-  clightningnet:
-    attachable: true
+  clnnet-0:
 
 volumes:
+
   bitcoind:
     external: true
-    name: bitcoind
+    name: bitcoind-regtest
+  cln-0:
+  cln-0-certs:
 
-  clightning:
+  clams-browser-app:
     external: true
-    name: clightning
+    name: clams-browser-app
+
+configs:
+  nginx-config:
+    file: /home/farscapian/github/farscapian/clams-app-docker/backend/nginx.conf

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -ex
 cd "$(dirname "$0")"
 
 # this script brings up the backend needed (i.e., lightningd+bitcoind) to test Clams app
@@ -40,25 +40,46 @@ export CLIGHTNING_P2P_PORT="$CLIGHTNING_P2P_PORT"
 export WEBSOCKET_PORT_LOCAL="$WEBSOCKET_PORT_LOCAL"
 export CLIGHTNING_LOCAL_BIND_ADDR="$CLIGHTNING_LOCAL_BIND_ADDR"
 
-# create docker volumes
-for VOLUME in clightning bitcoind; do
-    if ! docker volume list --format csv | grep -q "$VOLUME"; then
-        docker volume create "$VOLUME"
+# create docker volumes; regtest should never be persisted.
+for CHAIN in signet testnet mainnet; do
+    VOLUME_NAME="bitcoin-${CHAIN}"
+    if ! docker volume list --format csv | grep -q "$VOLUME_NAME"; then
+        docker volume create "$VOLUME_NAME"
     fi
 done
 
-docker compose up -d
-
-sleep 6
-
-until docker ps | grep -q clams-bitcoind; do
-    sleep 0.1;
-done;
-
-
-bash -c "../bitcoin-cli.sh createwallet clams-$BTC_CHAIN" > /dev/null 2>&1
-if [ "$BTC_CHAIN" = regtest ]; then
-    # create an on-chain wallet and progress some blocks.
-    
-    bash -c "../bitcoin-cli.sh -generate 5" > /dev/null 2>&1
+# we're using docker swarm style stacks, so enable swarm mode.
+if docker info | grep -q "Swarm: inactive"; then
+    docker swarm init
 fi
+
+NGINX_CONFIG_PATH="$(pwd)/nginx.conf"
+export NGINX_CONFIG_PATH="$NGINX_CONFIG_PATH"
+
+CLN_IMAGE_NAME="roygbiv/cln"
+CLN_IMAGE_TAG="23.02.2"
+CLN_IMAGE="$CLN_IMAGE_NAME:$CLN_IMAGE_TAG"
+export CLN_IMAGE="$CLN_IMAGE"
+
+
+# stub out the docker-compose.yml file before we bring it up.
+./stub_compose.sh
+./stub_nginx_conf.sh
+
+if ! docker image list | grep -q "roygbiv/clightning"; then
+
+    docker pull "polarlightning/clightning:23.02.2"
+
+    # build the docker image which contains dependencies for cln plugin prism.py
+
+    docker build -t "$CLN_IMAGE_NAME:$CLN_IMAGE_TAG" .
+
+    sleep 2
+
+    echo "Your image '$CLN_IMAGE_NAME:$CLN_IMAGE_TAG' has been updated."
+fi
+
+
+
+docker stack deploy -c docker-compose.yml clams-stack
+
