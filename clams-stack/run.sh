@@ -85,10 +85,11 @@ fi
 # create a volume to hold the browser app build output
 if docker volume list | grep -q "clams-browser-app"; then
     docker volume rm clams-browser-app
+    sleep 2
 fi
 
-docker volume create clams-browser-app
 
+docker volume create clams-browser-app
 
 BROWSER_APP_IMAGE_NAME="browser-app:$BROWSER_APP_GIT_TAG"
 
@@ -112,3 +113,5 @@ if [ "$ENABLE_TLS" = true ]; then
 fi
 
 docker stack deploy -c docker-compose.yml clams-stack
+
+sleep 5

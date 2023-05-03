@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -ex
 cd "$(dirname "$0")"
 
 # This script runs the whole Clams stack as determined by the various ./.env files
@@ -72,14 +72,7 @@ export CLN_COUNT="$CLN_COUNT"
 
 
 # exposes core lightning
-BTC_CHAIN="$BTC_CHAIN" ./backend/run.sh
-
-
-BITCOIND_CONTAINER_ID="$(docker ps | grep bitcoind | head -n1 | awk '{print $1;}')"
-
-
-exit 1
-
+BTC_CHAIN="$BTC_CHAIN" ./clams-stack/run.sh
 
 
 # the entrypoint is http in all cases; if ENABLE_TLS=true, then we rely on the 302 redirect to https.
@@ -99,14 +92,12 @@ for RUNE_TYPE in admin read-only clams; do
     echo "$RUNE_TYPE:  $RUNE"
 done
 
-
-
 PROTOCOL=ws
 if [ "$ENABLE_TLS" = true ]; then
     PROTOCOL=wss
 fi
 # the entrypoint is http in all cases; if ENABLE_TLS=true, then we rely on the 302 redirect to https.
-echo "Your lightning websocket endpoint can be found at '$PROTOCOL://0.0.0.0:$CLIGHTNING_WEBSOCKET_EXTERNAL_PORT'."
+echo "Your lightning websocket endpoint can be found at '$PROTOCOL://${CLAMS_FQDN}:$CLIGHTNING_WEBSOCKET_EXTERNAL_PORT'."
 
 if [ "$DEPLOY_LN_WS_PROXY" = true ]; then
     PROTOCOL=ws

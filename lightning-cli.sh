@@ -1,13 +1,19 @@
 #!/bin/bash
 
-set -e
+set -ex
 cd "$(dirname "$0")"
 
 . ./defaults.env
 . ./.env
-#
-if docker ps -a | grep -q clams-clightning; then
-    docker exec -it -u "$UID:$UID" clams-clightning lightning-cli --network "$BTC_CHAIN" "$@"
+
+CLN_ID=0
+
+# TODO add argument to specify CLN NODE ID
+
+
+if docker ps | grep -q "clams-stack_cln-${CLN_ID}"; then
+    CLN_CONTAINER_ID="$(docker ps | grep "clams-stack_cln-${CLN_ID}" | head -n1 | awk '{print $1;}')"
+    docker exec -it "$CLN_CONTAINER_ID" lightning-cli --network "$BTC_CHAIN" "$@"
 else
     echo "ERROR: Cannot find the clightning container. Did you run it?"
     exit 1

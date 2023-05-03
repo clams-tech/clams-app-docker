@@ -7,21 +7,14 @@ cd "$(dirname "$0")"
 
 source ./.env
 
-cd ./backend/
+cd ./clams-stack/
+
 if [ -f ./docker-compose.yml ]; then
     TIME_PER_CLN_NODE=4
     if docker stack ls --format "{{.Name}}" | grep -q clams-stack; then
         docker stack rm clams-stack && sleep $(($CLN_COUNT * $TIME_PER_CLN_NODE))
     fi
 fi
-
-cd ./nginx/
-if [ -f ./docker-compose.yml ]; then
-    docker compose down
-    rm -rf ./nginx.conf
-    rm docker-compose.yml
-fi
-cd ..
 
 cd ..
 

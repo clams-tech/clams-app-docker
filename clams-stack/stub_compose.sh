@@ -44,6 +44,18 @@ if [ "$ENABLE_TLS" = true ]; then
 EOF
 fi
 
+
+cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
+    networks:
+EOF
+
+for (( CLN_ID=0; CLN_ID<$CLN_COUNT; CLN_ID++ )); do
+    CLN_ALIAS="cln-${BTC_CHAIN}"
+cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
+      - clnnet-${CLN_ID}
+EOF
+done
+
 cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
     configs:
       - source: nginx-config
@@ -82,8 +94,7 @@ fi
 
 cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
     deploy:
-      mode: replicated
-      replicas: 1
+      mode: global
 
 EOF
 

@@ -78,9 +78,15 @@ cat >> "$NGINX_CONFIG_PATH" <<EOF
 
 EOF
 
+# CLN listens on
+STARTING_CLN_PORT=9736
 
-if [ "$ENABLE_TLS" = true ]; then
-    cat >> "$NGINX_CONFIG_PATH" <<EOF
+# write out service for CLN; style is a docker stack deploy style,
+# so we will use the replication feature
+for (( CLN_ID=0; CLN_ID<$CLN_COUNT; CLN_ID++ )); do
+    CLN_ALIAS="cln-${CLN_ID}"
+    if [ "$ENABLE_TLS" = true ]; then
+        cat >> "$NGINX_CONFIG_PATH" <<EOF
     map \$http_upgrade \$connection_upgrade {
         default upgrade;
         '' close;
@@ -103,37 +109,38 @@ if [ "$ENABLE_TLS" = true ]; then
             proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto \$scheme;
 
-            proxy_pass http://clams-clightning:9736;
+            proxy_pass http://${CLN_ALIAS}:9736;
         }
     }
 
 EOF
 
-fi
+    fi
+done
 
 
-# Server block for ln-ws-proxy.
-if [ "$DEPLOY_LN_WS_PROXY" = true ]; then
-    cat >> "$NGINX_CONFIG_PATH" <<EOF
+# # Server block for ln-ws-proxy.
+# if [ "$DEPLOY_LN_WS_PROXY" = true ]; then
+#     cat >> "$NGINX_CONFIG_PATH" <<EOF
 
-    server {
-        listen 443${SSL_TAG};
+#     server {
+#         listen 443${SSL_TAG};
 
-        server_name ${LN_WS_PROXY_HOSTNAME};
+#         server_name ${LN_WS_PROXY_HOSTNAME};
 
-        location / {
-            # 127.0.0.1:3000 is the ln-ws-proxy service.
-            proxy_pass http://ln-ws-proxy:3000;
-            proxy_http_version 1.1;
-            proxy_set_header Upgrade \$http_upgrade;
-            proxy_set_header Connection 'upgrade';
-            proxy_set_header Host \$host;
-            proxy_cache_bypass \$http_upgrade;
-        }
-    }
+#         location / {
+#             # 127.0.0.1:3000 is the ln-ws-proxy service.
+#             proxy_pass http://ln-ws-proxy:3000;
+#             proxy_http_version 1.1;
+#             proxy_set_header Upgrade \$http_upgrade;
+#             proxy_set_header Connection 'upgrade';
+#             proxy_set_header Host \$host;
+#             proxy_cache_bypass \$http_upgrade;
+#         }
+#     }
 
-EOF
-fi
+# EOF
+# fi
 
 
 # close HTTP block
