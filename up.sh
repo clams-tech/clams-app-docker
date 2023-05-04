@@ -70,7 +70,7 @@ export DEPLOY_PRISM_BROWSER_APP="$DEPLOY_PRISM_BROWSER_APP"
 export DOMAIN_NAME="$DOMAIN_NAME"
 PRISM_APP_IMAGE_NAME="prism-app:$VERSION"
 export PRISM_APP_IMAGE_NAME="$PRISM_APP_IMAGE_NAME"
-
+export STARTING_WEBSOCKET_PORT="$STARTING_WEBSOCKET_PORT"
 
 
 # exposes core lightning
@@ -80,13 +80,13 @@ BTC_CHAIN="$BTC_CHAIN" ./clams-stack/run.sh
 # the entrypoint is http in all cases; if ENABLE_TLS=true, then we rely on the 302 redirect to https.
 echo "The browser-app is available at http://${DOMAIN_NAME}:${BROWSER_APP_EXTERNAL_PORT}"
 
-for (( CLN_ID=0; CLN_ID<$CLN_COUNT; CLN_ID++ )); do
+for (( CLN_ID=0; CLN_ID<CLN_COUNT; CLN_ID++ )); do
     CLN_ALIAS="cln-${CLN_ID}"
-    CLN_WEBSOCKET_PORT=$(( $STARTING_WEBSOCKET_PORT+$CLN_ID ))
+    CLN_WEBSOCKET_PORT=$(( STARTING_WEBSOCKET_PORT+CLN_ID ))
+
     # now let's output the core lightning node URI so the user doesn't need to fetch that manually.
-    CLN_NODE_URI=$(bash -c ./get_node_uri.sh --id=$CLN_ID)
-    echo "Your core-lightning websocket \"Direct Connection (ws)\" for '$CLN_ALIAS' for CLN- is: "
-    ./get_node_uri.sh
+    CLN_NODE_URI=$(bash -c "./get_node_uri.sh --id=$CLN_ID --port=$CLN_WEBSOCKET_PORT")
+    echo "Your core-lightning websocket \"Direct Connection (ws)\" for '$CLN_ALIAS' is: $CLN_NODE_URI"
 done
 
 

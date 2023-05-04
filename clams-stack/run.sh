@@ -132,4 +132,6 @@ fi
 
 docker stack deploy -c docker-compose.yml clams-stack
 
-sleep 10
+sleep 15
+
+# TODO poll for container existence.
