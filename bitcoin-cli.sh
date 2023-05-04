@@ -3,6 +3,7 @@
 set -e
 cd "$(dirname "$0")"
 
+. ./defaults.env
 . ./.env
 
 if docker ps | grep -q bitcoind; then
