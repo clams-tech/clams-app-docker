@@ -4,7 +4,25 @@ set -e
 cd "$(dirname "$0")"
 
 . ./defaults.env
-. ./.env
+
+ENV_FILE_PATH=$(pwd)/environments/local.env
+
+# grab any modifications from the command line.
+for i in "$@"; do
+    case $i in
+        --env-file-path=*)
+            ENV_FILE_PATH="${i#*=}"
+            shift
+        ;;
+        *)
+        ;;
+    esac
+done
+
+# source the 
+if [ -f "$ENV_FILE_PATH" ]; then
+    source "$ENV_FILE_PATH"
+fi
 
 if docker ps | grep -q bitcoind; then
     BITCOIND_CONTAINER_ID="$(docker ps | grep bitcoind | head -n1 | awk '{print $1;}')"

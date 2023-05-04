@@ -77,7 +77,7 @@ if ! docker image list | grep -q "roygbiv/cln"; then
 
     docker build -t "$CLN_IMAGE_NAME:$CLN_IMAGE_TAG" .
 
-    sleep 2
+    sleep 5
 
     echo "Your image '$CLN_IMAGE_NAME:$CLN_IMAGE_TAG' has been updated."
 fi
@@ -103,6 +103,8 @@ if [ "$DEPLOY_CLAMS_BROWSER_APP" = true ]; then
         --build-arg VERSION="$BROWSER_APP_GIT_TAG" \
         -t "$BROWSER_APP_IMAGE_NAME" \
         ./browser-app/
+
+        sleep 5
     fi
 fi
 
@@ -119,6 +121,8 @@ if [ "$DEPLOY_PRISM_BROWSER_APP" = true ]; then
         --build-arg VERSION="$PRISM_APP_GIT_TAG" \
         -t "$PRISM_APP_IMAGE_NAME" \
         ./prism-app/
+
+        sleep 5
     fi
 fi
 

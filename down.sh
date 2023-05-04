@@ -6,7 +6,25 @@ cd "$(dirname "$0")"
 # this script tears everything down that might be up. It does not destroy data.
 
 source ./defaults.env
-source ./.env
+
+ENV_FILE_PATH=$(pwd)/environments/local.env
+
+# grab any modifications from the command line.
+for i in "$@"; do
+    case $i in
+        --env-file-path=*)
+            ENV_FILE_PATH="${i#*=}"
+            shift
+        ;;
+        *)
+        ;;
+    esac
+done
+
+# source the 
+if [ -f "$ENV_FILE_PATH" ]; then
+    source "$ENV_FILE_PATH"
+fi
 
 cd ./clams-stack/
 

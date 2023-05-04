@@ -2,6 +2,8 @@
 
 set -ex
 
+exit 1
+
 until docker ps | grep -q bitcoind; do
     sleep 0.1;
 done;

@@ -5,9 +5,29 @@ cd "$(dirname "$0")"
 
 . ./defaults.env
 
-. ./.env
+ENV_FILE_PATH=$(pwd)/environments/local.env
 
-./down.sh
+# grab any modifications from the command line.
+for i in "$@"; do
+    case $i in
+        --env-file-path=*)
+            ENV_FILE_PATH="${i#*=}"
+            shift
+        ;;
+        *)
+        ;;
+    esac
+done
+
+# source the 
+if [ ! -f "$ENV_FILE_PATH" ]; then
+    echo "ERROR: ENV_FILE_PATH '$ENV_FILE_PATH' does not exist."
+    exit 1
+fi
+
+source "$ENV_FILE_PATH"
+
+bash -c "./down.sh --env-file-path=$ENV_FILE_PATH"
 
 # ANSWER=n
 # read -r -e -p "Would you like to delete (non cert) volumes?" ANSWER
@@ -47,6 +67,4 @@ cd "$(dirname "$0")"
 # fi
 
 
-docker system prune -f
-
-./up.sh
+bash -c "./up.sh --env-file-path=$ENV_FILE_PATH"

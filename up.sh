@@ -14,22 +14,29 @@ for cmd in jq docker dig; do
     fi
 done
 
-
 . ./defaults.env
 
-. ./.env
+ENV_FILE_PATH=$(pwd)/environments/local.env
 
 # grab any modifications from the command line.
 for i in "$@"; do
     case $i in
-
+        --env-file-path=*)
+            ENV_FILE_PATH="${i#*=}"
+            shift
+        ;;
         *)
-        echo "Unexpected option: $1"
-        exit 1
         ;;
     esac
 done
 
+# source the 
+if [ ! -f "$ENV_FILE_PATH" ]; then
+    echo "ERROR: The environment path file could not be found."
+    exit 1
+fi
+
+source "$ENV_FILE_PATH"
 
 if [ "$ENABLE_TLS" = true ] && [ "$DOMAIN_NAME" = localhost ]; then
     echo "ERROR: You can't use TLS with with a DOMAIN_NAME of 'localhost'. Use something that's resolveable by in DNS."
@@ -72,10 +79,7 @@ PRISM_APP_IMAGE_NAME="prism-app:$VERSION"
 export PRISM_APP_IMAGE_NAME="$PRISM_APP_IMAGE_NAME"
 export STARTING_WEBSOCKET_PORT="$STARTING_WEBSOCKET_PORT"
 
-
-# exposes core lightning
-BTC_CHAIN="$BTC_CHAIN" ./clams-stack/run.sh
-
+./clams-stack/run.sh
 
 # the entrypoint is http in all cases; if ENABLE_TLS=true, then we rely on the 302 redirect to https.
 echo "The browser-app is available at http://${DOMAIN_NAME}:${BROWSER_APP_EXTERNAL_PORT}"
@@ -85,10 +89,9 @@ for (( CLN_ID=0; CLN_ID<CLN_COUNT; CLN_ID++ )); do
     CLN_WEBSOCKET_PORT=$(( STARTING_WEBSOCKET_PORT+CLN_ID ))
 
     # now let's output the core lightning node URI so the user doesn't need to fetch that manually.
-    CLN_NODE_URI=$(bash -c "./get_node_uri.sh --id=$CLN_ID --port=$CLN_WEBSOCKET_PORT")
+    CLN_NODE_URI=$(bash -c "./get_node_uri.sh --id=$CLN_ID --port=$CLN_WEBSOCKET_PORT --domain-name=$DOMAIN_NAME")
     echo "Your core-lightning websocket \"Direct Connection (ws)\" for '$CLN_ALIAS' is: $CLN_NODE_URI"
 done
-
 
 SESSION_ID=
 read -r -e -p "Paste the Clams session ID and press enter:  " SESSION_ID
@@ -105,6 +108,8 @@ if [ "$ENABLE_TLS" = true ]; then
 fi
 # the entrypoint is http in all cases; if ENABLE_TLS=true, then we rely on the 302 redirect to https.
 echo "Your lightning websocket endpoint can be found at '$PROTOCOL://${DOMAIN_NAME}:$CLIGHTNING_WEBSOCKET_EXTERNAL_PORT'."
+
+exit 1
 
 # ok, let's do the channel logic
 ./channel_templates/up.sh
