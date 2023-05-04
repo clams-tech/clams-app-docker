@@ -59,19 +59,58 @@ cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
 EOF
 done
 
+
+if [ "$DEPLOY_PRISM_BROWSER_APP" = true ]; then
+cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
+      - prism-appnet
+EOF
+fi
+
+
 cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
     configs:
       - source: nginx-config
         target: /etc/nginx/nginx.conf
     volumes:
+EOF
+
+
+if [ "$DEPLOY_CLAMS_BROWSER_APP" = true ]; then
+    cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
       - clams-browser-app:/browser-app
 EOF
+fi
 
 if [ "$ENABLE_TLS" = true ]; then
     cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
       - certs:/certs
 EOF
 fi
+
+
+
+
+if [ "$DEPLOY_PRISM_BROWSER_APP" = true ]; then
+    cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
+
+  prism-browser-app:
+    image: ${PRISM_APP_IMAGE_NAME}
+    networks:
+      - prism-appnet
+    environment:
+      - HOST=0.0.0.0
+      - PORT=5173
+    command: >-
+      npm run dev -- --host
+    deploy:
+      mode: global
+EOF
+
+fi
+
+
+
+
 
 cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
 
@@ -142,13 +181,19 @@ networks:
   bitcoindnet:
 EOF
 
-
 for (( CLN_ID=0; CLN_ID<$CLN_COUNT; CLN_ID++ )); do
     cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
   clnnet-${CLN_ID}:
 EOF
 
 done
+
+
+if [ "$DEPLOY_PRISM_BROWSER_APP" = true ]; then
+cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
+  prism-appnet:
+EOF
+fi
 
 
 cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
@@ -173,13 +218,14 @@ EOF
 
 done
 
-
-cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
+if [ "$DEPLOY_CLAMS_BROWSER_APP" = true ]; then
+    cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
 
   clams-browser-app:
     external: true
     name: clams-browser-app
 EOF
+fi
 
 if [ "$ENABLE_TLS" = true ]; then
     cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF

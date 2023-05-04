@@ -66,7 +66,7 @@ export CLN_IMAGE="$CLN_IMAGE"
 ./stub_compose.sh
 ./stub_nginx_conf.sh
 
-if docker image list | grep -q "roygbiv/cln"; then
+if ! docker image list | grep -q "roygbiv/cln"; then
 
     docker pull "polarlightning/clightning:23.02.2"
 
@@ -81,30 +81,45 @@ fi
 
 
 
+if [ "$DEPLOY_CLAMS_BROWSER_APP" = true ]; then
+    # create a volume to hold the browser app build output
+    if docker volume list | grep -q "clams-browser-app"; then
+        docker volume rm clams-browser-app
+        sleep 2
+    fi
 
-# create a volume to hold the browser app build output
-if docker volume list | grep -q "clams-browser-app"; then
-    docker volume rm clams-browser-app
-    sleep 2
+
+    docker volume create clams-browser-app
+
+    BROWSER_APP_IMAGE_NAME="browser-app:$BROWSER_APP_GIT_TAG"
+
+    # build the browser-app image.
+    # pull the base image from dockerhub and build the ./Dockerfile.
+    if ! docker image list --format "{{.Repository}}:{{.Tag}}" | grep -q "$BROWSER_APP_IMAGE_NAME"; then
+        docker build --build-arg GIT_REPO_URL="$BROWSER_APP_GIT_REPO_URL" \
+        --build-arg VERSION="$BROWSER_APP_GIT_TAG" \
+        -t "$BROWSER_APP_IMAGE_NAME" \
+        ./browser-app/
+    fi
 fi
 
+PRISM_APP_GIT_TAG="f6c544ac3d8a464d21f54591facc0671bc6a2241"
+PRISM_APP_GIT_REPO_URL="https://github.com/johngribbin/ROYGBIV-frontend"
 
-docker volume create clams-browser-app
+if [ "$DEPLOY_PRISM_BROWSER_APP" = true ]; then
 
-BROWSER_APP_IMAGE_NAME="browser-app:$BROWSER_APP_GIT_TAG"
 
-# build the browser-app image.
-# pull the base image from dockerhub and build the ./Dockerfile.
-if ! docker image list --format "{{.Repository}}:{{.Tag}}" | grep -q "$BROWSER_APP_IMAGE_NAME"; then
-    docker build --build-arg GIT_REPO_URL="$BROWSER_APP_GIT_REPO_URL" \
-    --build-arg VERSION="$BROWSER_APP_GIT_TAG" \
-    -t "$BROWSER_APP_IMAGE_NAME" \
-    ./browser-app/
+    # build the browser-app image.
+    # pull the base image from dockerhub and build the ./Dockerfile.
+    if ! docker image list --format "{{.Repository}}:{{.Tag}}" | grep -q "$PRISM_APP_IMAGE_NAME"; then
+        docker build --build-arg GIT_REPO_URL="$PRISM_APP_GIT_REPO_URL" \
+        --build-arg VERSION="$PRISM_APP_GIT_TAG" \
+        -t "$PRISM_APP_IMAGE_NAME" \
+        ./prism-app/
+    fi
 fi
 
-# if the image is built, execute it and we get our output
-docker run -t --rm -v clams-browser-app:/output --name browser-app "$BROWSER_APP_IMAGE_NAME"
-
+# for the nginx certificates.
 docker volume create clams-certs
 
 # check to see if we have certificates

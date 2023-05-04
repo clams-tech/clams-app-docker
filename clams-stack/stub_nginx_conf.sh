@@ -27,14 +27,14 @@ if [ "$ENABLE_TLS" = true ]; then
     ssl_stapling on;
     ssl_stapling_verify on;
 
-    ssl_certificate /certs/live/${CLAMS_FQDN}/fullchain.pem;
-    ssl_certificate_key /certs/live/${CLAMS_FQDN}/privkey.pem;
-    ssl_trusted_certificate /certs/live/${CLAMS_FQDN}/fullchain.pem;
+    ssl_certificate /certs/live/${DOMAIN_NAME}/fullchain.pem;
+    ssl_certificate_key /certs/live/${DOMAIN_NAME}/privkey.pem;
+    ssl_trusted_certificate /certs/live/${DOMAIN_NAME}/fullchain.pem;
 
     # http to https redirect.
     server {
         listen 80 default_server;
-        server_name ${CLAMS_FQDN};
+        server_name ${DOMAIN_NAME};
         return 301
 
         https://\$server_name\$request_uri;
@@ -59,13 +59,45 @@ if [ "$ENABLE_TLS" = true ]; then
     SERVICE_INTERNAL_PORT=443
 fi
 
-cat >> "$NGINX_CONFIG_PATH" <<EOF
+
+
+if [ "$DEPLOY_PRISM_BROWSER_APP" = true ]; then
+    cat >> "$NGINX_CONFIG_PATH" <<EOF
+
+    # https server block for the prism app
+    server {
+        listen 443${SSL_TAG};
+
+        server_name ${DOMAIN_NAME};
+
+        location / {
+            #proxy_http_version 1.1;
+            # proxy_set_header Upgrade \$http_upgrade;
+            # proxy_set_header Connection "Upgrade";
+            # proxy_set_header Host \$http_host;
+            # proxy_cache_bypass \$http_upgrade;
+
+            # proxy_read_timeout     60;
+            # proxy_connect_timeout  60;
+            # proxy_redirect         off;
+
+            proxy_pass http://prism-browser-app:5173;
+        }
+    }
+
+EOF
+fi
+
+
+
+if [ "$DEPLOY_CLAMS_BROWSER_APP" = true ]; then
+    cat >> "$NGINX_CONFIG_PATH" <<EOF
 
     # server block for the clams browser-app; just a static website
     server {
         listen ${SERVICE_INTERNAL_PORT}${SSL_TAG};
 
-        server_name ${CLAMS_FQDN};
+        server_name ${CLN_FQDN};
 
         autoindex off;
         server_tokens off;
@@ -77,6 +109,8 @@ cat >> "$NGINX_CONFIG_PATH" <<EOF
     }
 
 EOF
+fi
+
 
 STARTING_WEBSOCKET_PORT=9736
 
@@ -96,7 +130,7 @@ for (( CLN_ID=0; CLN_ID<$CLN_COUNT; CLN_ID++ )); do
     server {
         listen ${CLN_WEBSOCKET_PORT}${SSL_TAG};
 
-        server_name ${CLAMS_FQDN};
+        server_name ${CLN_FQDN};
 
         location / {
             proxy_http_version 1.1;

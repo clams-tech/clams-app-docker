@@ -21,4 +21,4 @@ for i in "$@"; do
 done
 
 NODE_PUBKEY=$(bash -c "./lightning-cli.sh --id=$NODE_ID getinfo" | jq -r '.id')
-echo "$NODE_PUBKEY@$CLAMS_FQDN:$CLIGHTNING_WEBSOCKET_EXTERNAL_PORT"
+echo "$NODE_PUBKEY@$CLN_FQDN:$CLIGHTNING_WEBSOCKET_EXTERNAL_PORT"

@@ -2,16 +2,16 @@
 
 ## overview
 
-This repo allows you get Clams running quickly in a [modern docker engine](https://docs.docker.com/engine/) using [`docker compose 3.8`](https://docs.docker.com/compose/compose-file/) and [docker swarm mode](`https://docs.docker.com/engine/swarm/`). The main scripts you need to know about are:
+This repo allows you get run lightning-based browser apps quickly in a [modern docker engine](https://docs.docker.com/engine/) using [`docker compose 3.8`](https://docs.docker.com/compose/compose-file/) and [docker swarm mode](`https://docs.docker.com/engine/swarm/`). The main scripts you need to know about are:
 
 * [`./install.sh`](install.sh) - this script installs docker and other utilities needed to run the rest of this software.
 * [`./up.sh`](./up.sh) - brings up your Clams infrastructure according to [`./.env`](./.env).
 * [`./down.sh`](./down.sh) - brings your Clams infrastructure down in a non-destructive way.
 * [`./reset.sh`](./reset.sh) - this is just a non-destructuve `down.sh`, the `up.sh`. Just save a step.
 
-If you leave [`./.env`](./.env) unmodified, you will get a single bitcoind and a single core lightning node running on regtest. In addition, the clams [browser-app](https://github.com/clams-tech/browser-app) becomes available on port 80/443. You backend primed to accept RPC calls using the websocket interface available on core lightning.
+If you leave [`./.env`](./.env) unmodified, you will get a 4 CLN nodes running on regtest, all connnected to a single bitcoind backend. In addition, the [prism-browser-app](https://github.com/johngribbin/ROYGBIV-frontend) becomes available on port 80/443 at `https://$DOMAIN_NAME`. Each CLN node is configured to accept websocket connections from remote clients.
 
-By updating [`./.env`](./.env), you can override anything specified in [`./defaults.env`](./defaults.env). The most important are the Global Settings. From here you can specify WHETHER to deploy TLS and if so, the [`fqdn`](https://en.wikipedia.org/wiki/Fully_qualified_domain_name) of the clams host (CLAMS_FQDN). Since we are using docker stacks, services are exposed on ALL IP addresses (so you cannot specify a bind address). This is usually fine if you're running a dedicated VM in the cloud, but if you're self-hosting, ensure the host is isolated on a DMZ.
+By updating [`./.env`](./.env), you can override anything specified in [`./defaults.env`](./defaults.env). The most important are the Global Settings. From here you can specify WHETHER to deploy TLS and if so, the [`fqdn`](https://en.wikipedia.org/wiki/Fully_qualified_domain_name) of the clams host (CLN_FQDN). Since we are using docker stacks, services are exposed on ALL IP addresses (so you cannot specify a bind address). This is usually fine if you're running a dedicated VM in the cloud, but if you're self-hosting, ensure the host is isolated on a DMZ.
 
 ## signet
 

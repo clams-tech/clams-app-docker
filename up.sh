@@ -31,8 +31,8 @@ for i in "$@"; do
 done
 
 
-if [ "$ENABLE_TLS" = true ] && [ "$CLAMS_FQDN" = localhost ]; then
-    echo "ERROR: You can't use TLS with with a CLAMS_FQDN of 'localhost'. Use something that's resolveable by in DNS."
+if [ "$ENABLE_TLS" = true ] && [ "$CLN_FQDN" = localhost ]; then
+    echo "ERROR: You can't use TLS with with a CLN_FQDN of 'localhost'. Use something that's resolveable by in DNS."
     exit 1
 fi
 
@@ -48,7 +48,7 @@ if [ "$BTC_CHAIN" != regtest ] && [ "$BTC_CHAIN" != signet ] && [ "$BTC_CHAIN" !
     exit 1
 fi
 
-export CLAMS_FQDN="$CLAMS_FQDN"
+
 export BTC_CHAIN="$BTC_CHAIN"
 export CLIGHTNING_WEBSOCKET_EXTERNAL_PORT="$CLIGHTNING_WEBSOCKET_EXTERNAL_PORT"
 
@@ -64,36 +64,43 @@ export LN_WS_PROXY_GIT_REPO_URL="$LN_WS_PROXY_GIT_REPO_URL"
 export LN_WS_PROXY_GIT_TAG="$LN_WS_PROXY_GIT_TAG"
 export CLN_COUNT="$CLN_COUNT"
 
+export VERSION="$VERSION"
+export DEPLOY_CLAMS_BROWSER_APP="$DEPLOY_CLAMS_BROWSER_APP"
+export DEPLOY_PRISM_BROWSER_APP="$DEPLOY_PRISM_BROWSER_APP"
+export DOMAIN_NAME="$DOMAIN_NAME"
+export CLN_FQDN="cln.$DOMAIN_NAME"
+PRISM_APP_IMAGE_NAME="prism-app:$VERSION"
+export PRISM_APP_IMAGE_NAME="$PRISM_APP_IMAGE_NAME"
 
 # exposes core lightning
 BTC_CHAIN="$BTC_CHAIN" ./clams-stack/run.sh
 
 
 # the entrypoint is http in all cases; if ENABLE_TLS=true, then we rely on the 302 redirect to https.
-echo "The Clams Browser App is available at http://${CLAMS_FQDN}:${BROWSER_APP_EXTERNAL_PORT}"
+echo "The browser-app is available at http://${DOMAIN_NAME}:${BROWSER_APP_EXTERNAL_PORT}"
 
-for (( CLN_ID=0; CLN_ID<$CLN_COUNT; CLN_ID++ )); do
-    CLN_ALIAS="cln-${CLN_ID}"
-    CLN_WEBSOCKET_PORT=$(( $STARTING_WEBSOCKET_PORT+$CLN_ID ))
-    # now let's output the core lightning node URI so the user doesn't need to fetch that manually.
-    CLN_NODE_URI=$(bash -c ./get_node_uri.sh --id=$CLN_ID)
-    echo "Your core-lightning websocket \"Direct Connection (ws)\" for '$CLN_ALIAS' for CLN- is: "
-    ./get_node_uri.sh
-done
+# for (( CLN_ID=0; CLN_ID<$CLN_COUNT; CLN_ID++ )); do
+#     CLN_ALIAS="cln-${CLN_ID}"
+#     CLN_WEBSOCKET_PORT=$(( $STARTING_WEBSOCKET_PORT+$CLN_ID ))
+#     # now let's output the core lightning node URI so the user doesn't need to fetch that manually.
+#     CLN_NODE_URI=$(bash -c ./get_node_uri.sh --id=$CLN_ID)
+#     echo "Your core-lightning websocket \"Direct Connection (ws)\" for '$CLN_ALIAS' for CLN- is: "
+#     ./get_node_uri.sh
+# done
 
 
-SESSION_ID=
-read -r -e -p "Paste the Clams session ID and press enter:  " SESSION_ID
+# SESSION_ID=
+# read -r -e -p "Paste the Clams session ID and press enter:  " SESSION_ID
 
-# check dependencies
-for RUNE_TYPE in admin read-only clams; do
-    RUNE=$(bash -c "./get_rune.sh --type=$RUNE_TYPE --session-id=$SESSION_ID")
-    echo "$RUNE_TYPE:  $RUNE"
-done
+# # check dependencies
+# for RUNE_TYPE in admin read-only clams; do
+#     RUNE=$(bash -c "./get_rune.sh --type=$RUNE_TYPE --session-id=$SESSION_ID")
+#     echo "$RUNE_TYPE:  $RUNE"
+# done
 
-PROTOCOL=ws
-if [ "$ENABLE_TLS" = true ]; then
-    PROTOCOL=wss
-fi
-# the entrypoint is http in all cases; if ENABLE_TLS=true, then we rely on the 302 redirect to https.
-echo "Your lightning websocket endpoint can be found at '$PROTOCOL://${CLAMS_FQDN}:$CLIGHTNING_WEBSOCKET_EXTERNAL_PORT'."
+# PROTOCOL=ws
+# if [ "$ENABLE_TLS" = true ]; then
+#     PROTOCOL=wss
+# fi
+# # the entrypoint is http in all cases; if ENABLE_TLS=true, then we rely on the 302 redirect to https.
+# echo "Your lightning websocket endpoint can be found at '$PROTOCOL://${CLN_FQDN}:$CLIGHTNING_WEBSOCKET_EXTERNAL_PORT'."
