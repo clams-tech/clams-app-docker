@@ -59,35 +59,82 @@ if [ "$ENABLE_TLS" = true ]; then
     SERVICE_INTERNAL_PORT=443
 fi
 
-
-
 if [ "$DEPLOY_PRISM_BROWSER_APP" = true ]; then
     cat >> "$NGINX_CONFIG_PATH" <<EOF
 
     # https server block for the prism app
     server {
-        listen 443${SSL_TAG};
+        listen ${SERVICE_INTERNAL_PORT}${SSL_TAG};
 
         server_name ${DOMAIN_NAME};
 
         location / {
-            #proxy_http_version 1.1;
-            # proxy_set_header Upgrade \$http_upgrade;
-            # proxy_set_header Connection "Upgrade";
-            # proxy_set_header Host \$http_host;
-            # proxy_cache_bypass \$http_upgrade;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade \$http_upgrade;
+            proxy_set_header Connection "Upgrade";
+            proxy_set_header Host \$http_host;
+            proxy_cache_bypass \$http_upgrade;
 
-            # proxy_read_timeout     60;
-            # proxy_connect_timeout  60;
-            # proxy_redirect         off;
+            proxy_read_timeout     60;
+            proxy_connect_timeout  60;
+            proxy_redirect         off;
 
             proxy_pass http://prism-browser-app:5173;
         }
     }
+EOF
+
+    if [ "$DEPLOY_CLAMS_BROWSER_APP" = true ]; then
+        cat >> "$NGINX_CONFIG_PATH" <<EOF
+
+        location /clams/ {
+            autoindex off;
+            server_tokens off;
+            gzip_static on;
+            root /browser-app;
+            index 200.html;
+        }
+    }
 
 EOF
+    fi
 fi
 
+STARTING_WEBSOCKET_PORT=9736
+
+# write out service for CLN; style is a docker stack deploy style,
+# so we will use the replication feature
+for (( CLN_ID=0; CLN_ID<$CLN_COUNT; CLN_ID++ )); do
+    CLN_ALIAS="cln-${CLN_ID}"
+    CLN_WEBSOCKET_PORT=$(( $STARTING_WEBSOCKET_PORT+$CLN_ID ))
+    cat >> "$NGINX_CONFIG_PATH" <<EOF
+    map \$http_upgrade \$connection_upgrade {
+        default upgrade;
+        '' close;
+    }
+
+    # server block for the clightning websockets path;
+    # this server block terminates TLS sessions and passes them to ws://.
+    server {
+        listen ${CLN_WEBSOCKET_PORT}${SSL_TAG};
+
+        server_name ${DOMAIN_NAME};
+
+        location / {
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade \$http_upgrade;
+            proxy_set_header Connection "Upgrade";
+            proxy_set_header Proxy "";
+            proxy_set_header Host \$http_host;
+            proxy_set_header X-Real-IP \$remote_addr;
+            proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto \$scheme;
+
+            proxy_pass http://${CLN_ALIAS}:9736;
+        }
+    }
+
+EOF
 
 
 if [ "$DEPLOY_CLAMS_BROWSER_APP" = true ]; then
@@ -110,43 +157,6 @@ if [ "$DEPLOY_CLAMS_BROWSER_APP" = true ]; then
 
 EOF
 fi
-
-
-STARTING_WEBSOCKET_PORT=9736
-
-# write out service for CLN; style is a docker stack deploy style,
-# so we will use the replication feature
-for (( CLN_ID=0; CLN_ID<$CLN_COUNT; CLN_ID++ )); do
-    CLN_ALIAS="cln-${CLN_ID}"
-    CLN_WEBSOCKET_PORT=$(( $STARTING_WEBSOCKET_PORT+$CLN_ID ))
-    cat >> "$NGINX_CONFIG_PATH" <<EOF
-    map \$http_upgrade \$connection_upgrade {
-        default upgrade;
-        '' close;
-    }
-
-    # server block for the clightning websockets path;
-    # this server block terminates TLS sessions and passes them to ws://.
-    server {
-        listen ${CLN_WEBSOCKET_PORT}${SSL_TAG};
-
-        server_name ${CLN_FQDN};
-
-        location / {
-            proxy_http_version 1.1;
-            proxy_set_header Upgrade \$http_upgrade;
-            proxy_set_header Connection "Upgrade";
-            proxy_set_header Proxy "";
-            proxy_set_header Host \$http_host;
-            proxy_set_header X-Real-IP \$remote_addr;
-            proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto \$scheme;
-
-            proxy_pass http://${CLN_ALIAS}:9736;
-        }
-    }
-
-EOF
 
 done
 
