@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ex
+set -e
 cd "$(dirname "$0")"
 
 # let's do a refresh of the certificates. Let's Encrypt will not run if it's not time.
