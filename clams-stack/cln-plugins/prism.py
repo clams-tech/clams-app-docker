@@ -4,6 +4,8 @@ from math import floor
 from pyln.client import Plugin, RpcError, LightningRpc, Millisatoshi
 plugin = Plugin()
 
+path_to_rpc = "/root/.lightning/regtest/lightning-rpc"
+
 
 @plugin.init()  # Decorator to define a callback once the `init` method call has successfully completed
 def init(options, configuration, plugin, **kwargs):
@@ -22,8 +24,7 @@ def prism(plugin, label, members):
         # Define the expected keys
         expected_keys = {"argument_label", "members"}
 
-        lrpc = LightningRpc(
-            "/home/clightning/.lightning/regtest/lightning-rpc")  # todo: set this as an env var
+        lrpc = LightningRpc(path_to_rpc)  # todo: set this as an env var
 
         # returns object containing bolt12 offer
         offer = lrpc.offer("any", label)
@@ -64,7 +65,7 @@ def on_payment(plugin, invoice_payment, **kwargs):
     # we will check if bolt12 we stored earlier in the prism call is in the label of the bolt11 invoice
     # at that point keysend pubkeys in the members
     # todo: set this as an env var
-    lrpc = LightningRpc("/home/clightning/.lightning/regtest/lightning-rpc")
+    lrpc = LightningRpc(path_to_rpc)
     expected_keys = {"destination", "pubkey", "amount"}
 
     # check datastore
