@@ -4,6 +4,7 @@
 
 This repo allows you get Clams running quickly in a [modern docker engine](https://docs.docker.com/engine/) using [`docker compose 3.8`](https://docs.docker.com/compose/compose-file/) and [docker swarm mode](`https://docs.docker.com/engine/swarm/`). The main scripts you need to know about are:
 
+* [`./install.sh`](install.sh) - this script installs docker and other utilities needed to run the rest of this software.
 * [`./up.sh`](./up.sh) - brings up your Clams infrastructure according to [`./.env`](./.env).
 * [`./down.sh`](./down.sh) - brings your Clams infrastructure down in a non-destructive way.
 * [`./reset.sh`](./reset.sh) - this is just a non-destructuve `down.sh`, the `up.sh`. Just save a step.
@@ -34,8 +35,12 @@ wss://CLAMS_HOST:9738
 
 The output of `./up.sh` provides you with useful information like service endpoints. The scripts also emit node URI from the CLN nodes that get deployed. This is the first piece of information you need when using the the clams browser app. The second piece of information you need is a functional rune. The script accepts a session ID (which the user copies from the [browser-app]) and produces a rune.
 
+## spinning up a new VM in a cloud proder
+
+Ok so lets say you want to create a server in the cloud so you can run this repo on it. All we assume is you're running ubuntu 22.04 server. After getting SSH access the to VM, you can copy/paste `./install_docker.sh`. Then usually you want to log out to refresh group membership. After that, your VM should be ready for `./up.sh`.
+
 
 # TODO
 
 1. Add option for creating QR codes that contain NODE_URI+RUNE information so they can be printed on a postcard. Then clams browser app could scan that BASE64 encoded URI as query string parameters.
-
+1. Integrate 
