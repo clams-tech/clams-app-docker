@@ -40,6 +40,17 @@ The output of `./up.sh` provides you with useful information like service endpoi
 Ok so lets say you want to create a server in the cloud so you can run this repo on it. All we assume is you're running ubuntu 22.04 server. After getting SSH access the to VM, you can clone this repo, then run `./install.sh`. Then usually you want to log out to refresh group membership. After that, your VM should be ready for `./up.sh`. 
 
 
+## regtest setup
+
+The default regtest setup consists of 1 bitcoin backend and 5 CLN nodes. After these nodes are deployed, they are funded then connected to each other over the p2p network. Then the following channels are opened:
+
+1.  Bob[0]->Alice[1]
+2.  Alice[1]->Carol[2]
+3.  Alice[1]->Diane[3]
+4.  Alice[1]->Betty[4]
+
+This setup is ideal from a testing perspective. You can access each node using the deployed clams wallet. But the root domain goes to the prism app. Configure the `prism-browser-app` against Alice, who will create the prism and expose the BOLT12 offer. All payments to the BOLT12 offer can be done in Bob's Clams app.
+
 # TODO
 
 1. Make default deployment a regtest network consisting of 5 CLN nodes all with channels created optimized for testing prisms. (farscapian)
