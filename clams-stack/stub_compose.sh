@@ -38,11 +38,9 @@ if [ "$ENABLE_TLS" = true ]; then
 EOF
 fi
 
-STARTING_WEBSOCKET_PORT=9736
-
 # these are the ports for the websocket connections.
-for (( CLN_ID=0; CLN_ID<$CLN_COUNT; CLN_ID++ )); do
-    CLN_WEBSOCKET_PORT=$(( $STARTING_WEBSOCKET_PORT+$CLN_ID ))
+for (( CLN_ID=0; CLN_ID<CLN_COUNT; CLN_ID++ )); do
+    CLN_WEBSOCKET_PORT=$(( STARTING_WEBSOCKET_PORT+CLN_ID ))
     cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
       - ${CLN_WEBSOCKET_PORT}:9736
 EOF
@@ -52,7 +50,7 @@ cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
     networks:
 EOF
 
-for (( CLN_ID=0; CLN_ID<$CLN_COUNT; CLN_ID++ )); do
+for (( CLN_ID=0; CLN_ID<CLN_COUNT; CLN_ID++ )); do
     CLN_ALIAS="cln-${BTC_CHAIN}"
 cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
       - clnnet-${CLN_ID}
@@ -143,7 +141,7 @@ EOF
 
 # write out service for CLN; style is a docker stack deploy style,
 # so we will use the replication feature
-for (( CLN_ID=0; CLN_ID<$CLN_COUNT; CLN_ID++ )); do
+for (( CLN_ID=0; CLN_ID<CLN_COUNT; CLN_ID++ )); do
     CLN_ALIAS="cln-${BTC_CHAIN}"
     CLN_COMMAND="sh -c \"chown 1000:1000 /opt/c-lightning-rest/certs && lightningd --alias=${CLN_ALIAS} --bind-addr=0.0.0.0 --announce-addr=\${CLIGHTNING_LOCAL_BIND_ADDR:-localhost}:\${CLIGHTNING_WEBSOCKET_EXTERNAL_PORT:-9736} --bitcoin-rpcuser=polaruser --bitcoin-rpcpassword=polarpass --bitcoin-rpcconnect=bitcoind --bitcoin-rpcport=\${BITCOIND_RPC_PORT:-18443} --log-level=debug --dev-bitcoind-poll=20 --dev-fast-gossip --experimental-websocket-port=9736 --plugin=/opt/c-lightning-rest/plugin.js --plugin=/plugins/prism.py --experimental-offers"
 
@@ -185,7 +183,7 @@ networks:
   bitcoindnet:
 EOF
 
-for (( CLN_ID=0; CLN_ID<$CLN_COUNT; CLN_ID++ )); do
+for (( CLN_ID=0; CLN_ID<CLN_COUNT; CLN_ID++ )); do
     cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
   clnnet-${CLN_ID}:
 EOF
@@ -214,7 +212,7 @@ EOF
 
 
 # define the volumes for CLN nodes. regtest and signet SHOULD NOT persist data, but TESTNET and MAINNET MUST define volumes
-for (( CLN_ID=0; CLN_ID<$CLN_COUNT; CLN_ID++ )); do
+for (( CLN_ID=0; CLN_ID<CLN_COUNT; CLN_ID++ )); do
     cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
   cln-${CLN_ID}:
   cln-${CLN_ID}-certs:

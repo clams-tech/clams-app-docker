@@ -100,13 +100,11 @@ EOF
     fi
 fi
 
-STARTING_WEBSOCKET_PORT=9736
-
 # write out service for CLN; style is a docker stack deploy style,
 # so we will use the replication feature
-for (( CLN_ID=0; CLN_ID<$CLN_COUNT; CLN_ID++ )); do
+for (( CLN_ID=0; CLN_ID<CLN_COUNT; CLN_ID++ )); do
     CLN_ALIAS="cln-${CLN_ID}"
-    CLN_WEBSOCKET_PORT=$(( $STARTING_WEBSOCKET_PORT+$CLN_ID ))
+    CLN_WEBSOCKET_PORT=$(( STARTING_WEBSOCKET_PORT+CLN_ID ))
     cat >> "$NGINX_CONFIG_PATH" <<EOF
     map \$http_upgrade \$connection_upgrade {
         default upgrade;
