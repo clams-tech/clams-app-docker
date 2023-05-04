@@ -43,7 +43,7 @@ if [ "$ENABLE_TLS" = true ] && [ "$DOMAIN_NAME" = localhost ]; then
     exit 1
 fi
 
-echo "INFO: You are targeting '$BTC_CHAIN'"
+echo "INFO: You are targeting '$BTC_CHAIN' using domain '$DOMAIN_NAME'"
 
 if [ "$ENABLE_TLS" = true ] && [ "$LN_WS_PROXY_HOSTNAME" = localhost ]; then
     echo "ERROR: You MUST set LN_WS_PROXY_HOSTNAME to a hostname resolveable in the DNS."
@@ -55,7 +55,7 @@ if [ "$BTC_CHAIN" != regtest ] && [ "$BTC_CHAIN" != signet ] && [ "$BTC_CHAIN" !
     exit 1
 fi
 
-
+export DOCKER_HOST="$DOCKER_HOST"
 export BTC_CHAIN="$BTC_CHAIN"
 export CLIGHTNING_WEBSOCKET_EXTERNAL_PORT="$CLIGHTNING_WEBSOCKET_EXTERNAL_PORT"
 

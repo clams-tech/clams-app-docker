@@ -19,10 +19,14 @@ for i in "$@"; do
     esac
 done
 
+
 # source the 
-if [ -f "$ENV_FILE_PATH" ]; then
-    source "$ENV_FILE_PATH"
+if [ ! -f "$ENV_FILE_PATH" ]; then
+    echo "ERROR: ENV_FILE_PATH '$ENV_FILE_PATH' does not exist."
+    exit 1
 fi
+
+source "$ENV_FILE_PATH"
 
 if docker ps | grep -q bitcoind; then
     BITCOIND_CONTAINER_ID="$(docker ps | grep bitcoind | head -n1 | awk '{print $1;}')"
