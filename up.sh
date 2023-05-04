@@ -76,8 +76,8 @@ for (( CLN_ID=0; CLN_ID<$CLN_COUNT; CLN_ID++ )); do
     CLN_ALIAS="cln-${CLN_ID}"
     CLN_WEBSOCKET_PORT=$(( $STARTING_WEBSOCKET_PORT+$CLN_ID ))
     # now let's output the core lightning node URI so the user doesn't need to fetch that manually.
-    CLN_NODE_URI=$(bash -c ./get_node_uri.sh)
-    echo "Your core-lightning websocket \"Direct Connection (ws)\" URI is: "
+    CLN_NODE_URI=$(bash -c ./get_node_uri.sh --id=$CLN_ID)
+    echo "Your core-lightning websocket \"Direct Connection (ws)\" for '$CLN_ALIAS' for CLN- is: "
     ./get_node_uri.sh
 done
 

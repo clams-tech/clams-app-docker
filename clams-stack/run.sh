@@ -66,7 +66,7 @@ export CLN_IMAGE="$CLN_IMAGE"
 ./stub_compose.sh
 ./stub_nginx_conf.sh
 
-if ! docker image list | grep -q "roygbiv/clightning"; then
+if docker image list | grep -q "roygbiv/cln"; then
 
     docker pull "polarlightning/clightning:23.02.2"
 
@@ -114,4 +114,4 @@ fi
 
 docker stack deploy -c docker-compose.yml clams-stack
 
-sleep 5
+sleep 10
