@@ -37,7 +37,7 @@ The output of `./up.sh` provides you with useful information like service endpoi
 
 ## spinning up a new VM in a cloud proder
 
-Ok so lets say you want to create a server in the cloud so you can run this repo on it. All we assume is you're running ubuntu 22.04 server. After getting SSH access the to VM, you can copy/paste `./install_docker.sh`. Then usually you want to log out to refresh group membership. After that, your VM should be ready for `./up.sh`.
+Ok so lets say you want to create a server in the cloud so you can run this repo on it. All we assume is you're running ubuntu 22.04 server. After getting SSH access the to VM, you can clone this repo, then run `./install.sh`. Then usually you want to log out to refresh group membership. After that, your VM should be ready for `./up.sh`. 
 
 
 # TODO
