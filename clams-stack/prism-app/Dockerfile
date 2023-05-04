@@ -1,4 +1,4 @@
-FROM node:19.7
+FROM node:latest
 
 ARG GIT_REPO_URL
 ARG VERSION
