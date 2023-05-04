@@ -3,7 +3,6 @@
 set -eu
 cd "$(dirname "$0")"
 
-# this script destroys everything -- including output files -- then brings everything back up.
 . ./defaults.env
 
 . ./.env
