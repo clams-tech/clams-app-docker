@@ -189,27 +189,6 @@ if [ "$ENABLE_TLS" = true ]; then
 EOF
 fi
 
-
-
-
-
-####
-
-
-# if [ "$DEPLOY_LN_WS_PROXY" = true ]; then
-#     cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
-    
-#   ln-ws-proxy:
-
-#     image: ${LN_WS_PROXY_IMAGE_NAME}
-#     networks:
-#       - lnwsproxynet
-#     expose:
-#       - '3000'
-# EOF
-
-# fi
-
 cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
 
 configs:

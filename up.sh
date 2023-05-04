@@ -19,15 +19,10 @@ done
 
 . ./.env
 
-OUTPUT_NGINX_FRAGMENTS=true
-
 # grab any modifications from the command line.
 for i in "$@"; do
     case $i in
-        --no-nginx-fragments)
-            OUTPUT_NGINX_FRAGMENTS=false
-            shift
-        ;;
+
         *)
         echo "Unexpected option: $1"
         exit 1
@@ -35,7 +30,6 @@ for i in "$@"; do
     esac
 done
 
-export OUTPUT_NGINX_FRAGMENTS="$OUTPUT_NGINX_FRAGMENTS"
 
 if [ "$ENABLE_TLS" = true ] && [ "$CLAMS_FQDN" = localhost ]; then
     echo "ERROR: You can't use TLS with with a CLAMS_FQDN of 'localhost'. Use something that's resolveable by in DNS."
@@ -44,7 +38,7 @@ fi
 
 echo "INFO: You are targeting '$BTC_CHAIN'"
 
-if [ "$ENABLE_TLS" = true ] && [ "$DEPLOY_LN_WS_PROXY" = true ] && [ "$LN_WS_PROXY_HOSTNAME" = localhost ]; then
+if [ "$ENABLE_TLS" = true ] && [ "$LN_WS_PROXY_HOSTNAME" = localhost ]; then
     echo "ERROR: You MUST set LN_WS_PROXY_HOSTNAME to a hostname resolveable in the DNS."
     exit 1
 fi
@@ -60,7 +54,7 @@ export CLIGHTNING_WEBSOCKET_EXTERNAL_PORT="$CLIGHTNING_WEBSOCKET_EXTERNAL_PORT"
 
 export ENABLE_TLS="$ENABLE_TLS"
 export LIGHTNING_P2P_EXTERNAL_PORT="$CLIGHTNING_P2P_EXTERNAL_PORT"
-export DEPLOY_LN_WS_PROXY="$DEPLOY_LN_WS_PROXY"
+
 export LN_WS_PROXY_HOSTNAME="$LN_WS_PROXY_HOSTNAME"
 export BROWSER_APP_EXTERNAL_PORT="$BROWSER_APP_EXTERNAL_PORT"
 
@@ -77,7 +71,6 @@ BTC_CHAIN="$BTC_CHAIN" ./clams-stack/run.sh
 
 # the entrypoint is http in all cases; if ENABLE_TLS=true, then we rely on the 302 redirect to https.
 echo "The Clams Browser App is available at http://${CLAMS_FQDN}:${BROWSER_APP_EXTERNAL_PORT}"
-
 
 for (( CLN_ID=0; CLN_ID<$CLN_COUNT; CLN_ID++ )); do
     CLN_ALIAS="cln-${CLN_ID}"
@@ -104,13 +97,3 @@ if [ "$ENABLE_TLS" = true ]; then
 fi
 # the entrypoint is http in all cases; if ENABLE_TLS=true, then we rely on the 302 redirect to https.
 echo "Your lightning websocket endpoint can be found at '$PROTOCOL://${CLAMS_FQDN}:$CLIGHTNING_WEBSOCKET_EXTERNAL_PORT'."
-
-if [ "$DEPLOY_LN_WS_PROXY" = true ]; then
-    PROTOCOL=ws
-    if [ "$ENABLE_TLS" = true ]; then
-        PROTOCOL=wss
-    fi
-
-    # the entrypoint is http in all cases; if ENABLE_TLS=true, then we rely on the 302 redirect to https.
-    echo "Your wss endpoint can be found at: '$PROTOCOL://$LN_WS_PROXY_HOSTNAME'."
-fi

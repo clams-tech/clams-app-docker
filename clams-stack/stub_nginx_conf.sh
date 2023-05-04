@@ -116,34 +116,6 @@ EOF
 
 done
 
-
-# # Server block for ln-ws-proxy.
-# if [ "$DEPLOY_LN_WS_PROXY" = true ]; then
-#     cat >> "$NGINX_CONFIG_PATH" <<EOF
-
-#     server {
-#         listen 443${SSL_TAG};
-
-#         server_name ${LN_WS_PROXY_HOSTNAME};
-
-#         location / {
-#             # 127.0.0.1:3000 is the ln-ws-proxy service.
-#             proxy_pass http://ln-ws-proxy:3000;
-#             proxy_http_version 1.1;
-#             proxy_set_header Upgrade \$http_upgrade;
-#             proxy_set_header Connection 'upgrade';
-#             proxy_set_header Host \$host;
-#             proxy_cache_bypass \$http_upgrade;
-#         }
-#     }
-
-# EOF
-# fi
-
-
-# close HTTP block
-if [ "$OUTPUT_NGINX_FRAGMENTS" = true ]; then
     cat >> "$NGINX_CONFIG_PATH" <<EOF
 }
 EOF
-fi
