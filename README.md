@@ -42,5 +42,7 @@ Ok so lets say you want to create a server in the cloud so you can run this repo
 
 # TODO
 
-1. Add option for creating QR codes that contain NODE_URI+RUNE information so they can be printed on a postcard. Then clams browser app could scan that BASE64 encoded URI as query string parameters.
-1. Integrate 
+1. Make default deployment a regtest network consisting of 5 CLN nodes all with channels created optimized for testing prisms. (farscapian)
+2. Make all deployments variable in size with different channel establishement mechanisms. (derek)
+3. Add option for creating QR codes that contain NODE_URI+RUNE information so they can be printed on a postcard. Then clams browser app could scan that BASE64 encoded URI as query string parameters. (derek)
+4. Finish integrating https://github.com/johngribbin/ROYGBIV-frontend at https://roygbiv.money (ethan)
