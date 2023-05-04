@@ -6,5 +6,19 @@ cd "$(dirname "$0")"
 . ./defaults.env
 . ./.env
 
-NODE_PUBKEY=$(./lightning-cli.sh getinfo | jq -r '.id')
+NODE_ID=0
+
+# grab any modifications from the command line.
+for i in "$@"; do
+    case $i in
+        --id=*)
+            NODE_ID="${i#*=}"
+            shift
+        ;;
+        *)
+        ;;
+    esac
+done
+
+NODE_PUBKEY=$(bash -c "./lightning-cli.sh --id=$NODE_ID getinfo" | jq -r '.id')
 echo "$NODE_PUBKEY@$CLAMS_FQDN:$CLIGHTNING_WEBSOCKET_EXTERNAL_PORT"
