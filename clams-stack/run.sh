@@ -66,6 +66,9 @@ export CLN_IMAGE="$CLN_IMAGE"
 ./stub_compose.sh
 ./stub_nginx_conf.sh
 
+# pull bitcoind down
+docker pull "polarlightning/bitcoind:24.0"
+
 if ! docker image list | grep -q "roygbiv/cln"; then
 
     docker pull "polarlightning/clightning:23.02.2"
