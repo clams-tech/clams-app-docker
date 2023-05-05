@@ -106,26 +106,5 @@ for (( CLN_ID=0; CLN_ID<CLN_COUNT; CLN_ID++ )); do
 done
 
 
-for (( CLN_ID=0; CLN_ID<CLN_COUNT; CLN_ID++ )); do
-    SESSION_ID=
-    read -r -e -p "Paste the clams session ID and press enter:  " SESSION_ID
-
-    # check dependencies
-    for RUNE_TYPE in admin read-only clams; do
-        RUNE=$(bash -c "./get_rune.sh --type=$RUNE_TYPE --session-id=$SESSION_ID --id=${CLN_ID}")
-        echo "$RUNE_TYPE:  $RUNE"
-    done
-done
-
-
-PROTOCOL=ws
-if [ "$ENABLE_TLS" = true ]; then
-    PROTOCOL=wss
-fi
-# the entrypoint is http in all cases; if ENABLE_TLS=true, then we rely on the 302 redirect to https.
-echo "Your lightning websocket endpoint can be found at '$PROTOCOL://${DOMAIN_NAME}:$CLIGHTNING_WEBSOCKET_EXTERNAL_PORT'."
-
-exit 1
-
 # ok, let's do the channel logic
 ./channel_templates/up.sh
