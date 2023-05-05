@@ -2,13 +2,11 @@
 
 set -ex
 
-exit 1
-
+# wait for bitcvoind container to startup
 until docker ps | grep -q bitcoind; do
     sleep 0.1;
 done;
 
-alias bitcoin-cli="bash -c ../bitcoin-cli.sh"
 
 ./bitcoind_load_onchain.sh
 
