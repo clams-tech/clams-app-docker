@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ex
+set -e
 
 # this script creates channels among 5 nodes in the following way:
 

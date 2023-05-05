@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -ex
+set -e
 
 # the purpose of this script is to ensure that all CLN nodes have on-chain funds.
 

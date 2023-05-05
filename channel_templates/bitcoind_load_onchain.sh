@@ -3,7 +3,7 @@
 # the purpose of this script is to ensure the bitcoind
 # node has plenty of on-chain funds upon which to fund the CLN nodes.
 
-set -ex
+set -e
 cd "$(dirname "$0")"
 
 bcli() {
