@@ -31,7 +31,7 @@ cd ./clams-stack/
 if [ -f ./docker-compose.yml ]; then
     TIME_PER_CLN_NODE=4
     if docker stack ls --format "{{.Name}}" | grep -q clams-stack; then
-        docker stack rm clams-stack && sleep $(($CLN_COUNT * $TIME_PER_CLN_NODE))
+        docker stack rm clams-stack && sleep $((CLN_COUNT * TIME_PER_CLN_NODE))
     fi
 fi
 

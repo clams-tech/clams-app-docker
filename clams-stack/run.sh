@@ -105,6 +105,8 @@ if [ "$DEPLOY_CLAMS_BROWSER_APP" = true ]; then
         ./browser-app/
 
         sleep 5
+
+        docker run -t --rm -v clams-browser-app:/output --name browser-app "$BROWSER_APP_IMAGE_NAME"
     fi
 fi
 
@@ -123,6 +125,7 @@ if [ "$DEPLOY_PRISM_BROWSER_APP" = true ]; then
         ./prism-app/
 
         sleep 5
+        
     fi
 fi
 

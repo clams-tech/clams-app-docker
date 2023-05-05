@@ -43,7 +43,7 @@ if [ "$ENABLE_TLS" = true ] && [ "$DOMAIN_NAME" = localhost ]; then
     exit 1
 fi
 
-echo "INFO: You are targeting '$BTC_CHAIN' using domain '$DOMAIN_NAME'"
+echo "INFO: You are targeting '$BTC_CHAIN' using domain '$DOMAIN_NAME' DOCKER_HOST=${DOCKER_HOST}'"
 
 if [ "$ENABLE_TLS" = true ] && [ "$LN_WS_PROXY_HOSTNAME" = localhost ]; then
     echo "ERROR: You MUST set LN_WS_PROXY_HOSTNAME to a hostname resolveable in the DNS."
@@ -75,6 +75,8 @@ export VERSION="$VERSION"
 export DEPLOY_CLAMS_BROWSER_APP="$DEPLOY_CLAMS_BROWSER_APP"
 export DEPLOY_PRISM_BROWSER_APP="$DEPLOY_PRISM_BROWSER_APP"
 export DOMAIN_NAME="$DOMAIN_NAME"
+CLAMS_FQDN="clams.${DOMAIN_NAME}"
+export CLAMS_FQDN="$CLAMS_FQDN"
 PRISM_APP_IMAGE_NAME="prism-app:$VERSION"
 export PRISM_APP_IMAGE_NAME="$PRISM_APP_IMAGE_NAME"
 export STARTING_WEBSOCKET_PORT="$STARTING_WEBSOCKET_PORT"
@@ -82,7 +84,11 @@ export STARTING_WEBSOCKET_PORT="$STARTING_WEBSOCKET_PORT"
 ./clams-stack/run.sh
 
 # the entrypoint is http in all cases; if ENABLE_TLS=true, then we rely on the 302 redirect to https.
-echo "The browser-app is available at http://${DOMAIN_NAME}:${BROWSER_APP_EXTERNAL_PORT}"
+echo "The prism-browser-app is available at http://${DOMAIN_NAME}:${BROWSER_APP_EXTERNAL_PORT}"
+
+if [ "$DEPLOY_CLAMS_BROWSER_APP" = true ]; then
+    echo "The prism-browser-app is available at http://${DOMAIN_NAME}:${BROWSER_APP_EXTERNAL_PORT}"
+fi
 
 for (( CLN_ID=0; CLN_ID<CLN_COUNT; CLN_ID++ )); do
     CLN_ALIAS="cln-${CLN_ID}"

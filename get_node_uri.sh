@@ -20,9 +20,11 @@ for i in "$@"; do
 done
 
 # source the 
-if [ -f "$ENV_FILE_PATH" ]; then
-    source "$ENV_FILE_PATH"
+if [ ! -f "$ENV_FILE_PATH" ]; then
+    echo "ERROR: ENV_FILE_PATH does not exist."
 fi
+
+source "$ENV_FILE_PATH"
 
 NODE_ID=0
 PORT=9736

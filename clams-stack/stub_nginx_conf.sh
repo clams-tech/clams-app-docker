@@ -87,7 +87,13 @@ EOF
     if [ "$DEPLOY_CLAMS_BROWSER_APP" = true ]; then
         cat >> "$NGINX_CONFIG_PATH" <<EOF
 
-        location /clams/ {
+    # https server block for the clams-browser-app
+    server {
+        listen ${SERVICE_INTERNAL_PORT}${SSL_TAG};
+
+        server_name ${CLAMS_FQDN};
+
+        location / {
             autoindex off;
             server_tokens off;
             gzip_static on;
@@ -133,28 +139,6 @@ for (( CLN_ID=0; CLN_ID<CLN_COUNT; CLN_ID++ )); do
     }
 
 EOF
-
-
-if [ "$DEPLOY_CLAMS_BROWSER_APP" = true ]; then
-    cat >> "$NGINX_CONFIG_PATH" <<EOF
-
-    # server block for the clams browser-app; just a static website
-    server {
-        listen ${SERVICE_INTERNAL_PORT}${SSL_TAG};
-
-        server_name ${CLN_FQDN};
-
-        autoindex off;
-        server_tokens off;
-        
-        gzip_static on;
-
-        root /browser-app;
-        index 200.html;
-    }
-
-EOF
-fi
 
 done
 
