@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -ex
 cd "$(dirname "$0")"
 
 . ./defaults.env
@@ -28,7 +28,6 @@ source "$ENV_FILE_PATH"
 
 NODE_ID=0
 PORT=9736
-DOMAIN_NAME=
 
 # grab any modifications from the command line.
 for i in "$@"; do
@@ -41,19 +40,11 @@ for i in "$@"; do
             PORT="${i#*=}"
             shift
         ;;
-        --domain-name=*)
-            DOMAIN_NAME="${i#*=}"
-            shift
-        ;;
         *)
         ;;
     esac
 done
 
-if [ -z "$DOMAIN_NAME" ]; then
-    echo "ERROR: you MUST set a DOMAIN_NAME"
-    exit 1
-fi
 
 NODE_PUBKEY=$(bash -c "./lightning-cli.sh --id=$NODE_ID getinfo" | jq -r '.id')
 echo "$NODE_PUBKEY@$DOMAIN_NAME:$PORT"
