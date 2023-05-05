@@ -132,7 +132,7 @@ if [ "$ENABLE_TLS" = true ]; then
     ./getrenew_cert.sh
 fi
 
-docker stack deploy -c docker-compose.yml clams-stack
+docker stack deploy -c docker-compose.yml roygbiv-stack
 
 sleep 15
 
