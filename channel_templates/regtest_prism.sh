@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -ex
+
 # this script creates channels among 5 nodes in the following way:
 
 # 1.  Bob[0]->Alice[1]
@@ -9,3 +11,4 @@
 
 # ASSUMPTIONS: we assume in this script that all the Lightning nodes have on-chain funds!
 
+echo "TODO: regtest_prism.sh"
