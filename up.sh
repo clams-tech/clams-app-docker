@@ -99,14 +99,18 @@ for (( CLN_ID=0; CLN_ID<CLN_COUNT; CLN_ID++ )); do
     echo "Your core-lightning websocket \"Direct Connection (ws)\" for '$CLN_ALIAS' is: $CLN_NODE_URI"
 done
 
-SESSION_ID=
-read -r -e -p "Paste the Clams session ID and press enter:  " SESSION_ID
 
-# check dependencies
-for RUNE_TYPE in admin read-only clams; do
-    RUNE=$(bash -c "./get_rune.sh --type=$RUNE_TYPE --session-id=$SESSION_ID")
-    echo "$RUNE_TYPE:  $RUNE"
+for (( CLN_ID=0; CLN_ID<CLN_COUNT; CLN_ID++ )); do
+    SESSION_ID=
+    read -r -e -p "Paste the clams session ID and press enter:  " SESSION_ID
+
+    # check dependencies
+    for RUNE_TYPE in admin read-only clams; do
+        RUNE=$(bash -c "./get_rune.sh --type=$RUNE_TYPE --session-id=$SESSION_ID --id=${CLN_ID}")
+        echo "$RUNE_TYPE:  $RUNE"
+    done
 done
+
 
 PROTOCOL=ws
 if [ "$ENABLE_TLS" = true ]; then

@@ -9,7 +9,7 @@ This repo allows you get run lightning-based browser apps quickly in a [modern d
 * [`./down.sh`](./down.sh) - brings your Clams infrastructure down in a non-destructive way.
 * [`./reset.sh`](./reset.sh) - this is just a non-destructuve `down.sh`, the `up.sh`. Just save a step.
 
-If you leave [`./.env`](./.env) unmodified, you will get a 4 CLN nodes running on regtest, all connnected to a single bitcoind backend. In addition, the [prism-browser-app](https://github.com/johngribbin/ROYGBIV-frontend) becomes available on port 80/443 at `https://$DOMAIN_NAME`. Each CLN node is configured to accept websocket connections from remote clients.
+If you leave [`./.env`](./.env) unmodified, you will get a 5 CLN nodes running on regtest, all connnected to a single bitcoind backend. In addition, the [prism-browser-app](https://github.com/johngribbin/ROYGBIV-frontend) becomes available on port 80/443 at `https://$DOMAIN_NAME` and the clams-browser-app becomes available at `https://clams.domain.tld`. Each CLN node is configured to accept websocket connections from remote clients.
 
 By updating [`./.env`](./.env), you can override anything specified in [`./defaults.env`](./defaults.env). The most important are the Global Settings. From here you can specify WHETHER to deploy TLS and if so, the [`fqdn`](https://en.wikipedia.org/wiki/Fully_qualified_domain_name) of the clams host (DOMAIN_NAME). Since we are using docker stacks, services are exposed on ALL IP addresses (so you cannot specify a bind address). This is usually fine if you're running a dedicated VM in the cloud, but if you're self-hosting, ensure the host is isolated on a DMZ.
 
