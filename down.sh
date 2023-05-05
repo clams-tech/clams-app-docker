@@ -29,12 +29,12 @@ fi
 
 source "$ENV_FILE_PATH"
 
-cd ./clams-stack/
+cd ./roygbiv/
 
 if [ -f ./docker-compose.yml ]; then
     TIME_PER_CLN_NODE=4
-    if docker stack ls --format "{{.Name}}" | grep -q clams-stack; then
-        docker stack rm clams-stack && sleep $((CLN_COUNT * TIME_PER_CLN_NODE))
+    if docker stack ls --format "{{.Name}}" | grep -q roygbiv-stack; then
+        docker stack rm roygbiv-stack && sleep $((CLN_COUNT * TIME_PER_CLN_NODE))
     fi
 fi
 

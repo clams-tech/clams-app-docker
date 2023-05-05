@@ -86,7 +86,7 @@ PRISM_APP_IMAGE_TAG="${PRISM_APP_GIT_TAG: -5}"
 PRISM_APP_IMAGE_NAME="prism-browser-app:$PRISM_APP_IMAGE_TAG"
 export PRISM_APP_IMAGE_NAME="$PRISM_APP_IMAGE_NAME"
 
-./clams-stack/run.sh
+./roygbiv/run.sh
 
 # the entrypoint is http in all cases; if ENABLE_TLS=true, then we rely on the 302 redirect to https.
 echo "The prism-browser-app is available at http://${DOMAIN_NAME}:${BROWSER_APP_EXTERNAL_PORT}"
