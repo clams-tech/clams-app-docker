@@ -43,7 +43,8 @@ if [ "$ENABLE_TLS" = true ] && [ "$DOMAIN_NAME" = localhost ]; then
     exit 1
 fi
 
-echo "INFO: You are targeting '$BTC_CHAIN' using domain '$DOMAIN_NAME' DOCKER_HOST=${DOCKER_HOST}'"
+echo "INFO: All commands are being applied using the following DOCKER_HOST string: $DOCKER_HOST"
+echo "INFO: You are targeting '$BTC_CHAIN' using domain '$DOMAIN_NAME'."
 
 if [ "$ENABLE_TLS" = true ] && [ "$LN_WS_PROXY_HOSTNAME" = localhost ]; then
     echo "ERROR: You MUST set LN_WS_PROXY_HOSTNAME to a hostname resolveable in the DNS."
@@ -71,15 +72,19 @@ export LN_WS_PROXY_GIT_REPO_URL="$LN_WS_PROXY_GIT_REPO_URL"
 export LN_WS_PROXY_GIT_TAG="$LN_WS_PROXY_GIT_TAG"
 export CLN_COUNT="$CLN_COUNT"
 
-export VERSION="$VERSION"
 export DEPLOY_CLAMS_BROWSER_APP="$DEPLOY_CLAMS_BROWSER_APP"
 export DEPLOY_PRISM_BROWSER_APP="$DEPLOY_PRISM_BROWSER_APP"
 export DOMAIN_NAME="$DOMAIN_NAME"
 CLAMS_FQDN="clams.${DOMAIN_NAME}"
 export CLAMS_FQDN="$CLAMS_FQDN"
-PRISM_APP_IMAGE_NAME="prism-app:$VERSION"
-export PRISM_APP_IMAGE_NAME="$PRISM_APP_IMAGE_NAME"
+
 export STARTING_WEBSOCKET_PORT="$STARTING_WEBSOCKET_PORT"
+
+export PRISM_APP_GIT_TAG="$PRISM_APP_GIT_TAG"
+export PRISM_APP_GIT_REPO_URL="$PRISM_APP_GIT_REPO_URL"
+PRISM_APP_IMAGE_TAG="${PRISM_APP_GIT_TAG: -5}"
+PRISM_APP_IMAGE_NAME="prism-browser-app:$PRISM_APP_IMAGE_TAG"
+export PRISM_APP_IMAGE_NAME="$PRISM_APP_IMAGE_NAME"
 
 ./clams-stack/run.sh
 
@@ -90,12 +95,13 @@ if [ "$DEPLOY_CLAMS_BROWSER_APP" = true ]; then
     echo "The prism-browser-app is available at http://${DOMAIN_NAME}:${BROWSER_APP_EXTERNAL_PORT}"
 fi
 
+# print out the CLN node URIs for the user.
 for (( CLN_ID=0; CLN_ID<CLN_COUNT; CLN_ID++ )); do
     CLN_ALIAS="cln-${CLN_ID}"
     CLN_WEBSOCKET_PORT=$(( STARTING_WEBSOCKET_PORT+CLN_ID ))
 
     # now let's output the core lightning node URI so the user doesn't need to fetch that manually.
-    CLN_NODE_URI=$(bash -c "./get_node_uri.sh --id=$CLN_ID --port=$CLN_WEBSOCKET_PORT --domain-name=$DOMAIN_NAME")
+    CLN_NODE_URI=$(bash -c "./get_node_uri.sh --env-file-path=${ENV_FILE_PATH} --id=${CLN_ID} --port=${CLN_WEBSOCKET_PORT}")
     echo "Your core-lightning websocket \"Direct Connection (ws)\" for '$CLN_ALIAS' is: $CLN_NODE_URI"
 done
 

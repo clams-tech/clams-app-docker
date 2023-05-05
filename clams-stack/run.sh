@@ -110,22 +110,17 @@ if [ "$DEPLOY_CLAMS_BROWSER_APP" = true ]; then
     docker run -it --rm -v clams-browser-app:/output --name browser-app "$BROWSER_APP_IMAGE_NAME"
 fi
 
-PRISM_APP_GIT_TAG="f6c544ac3d8a464d21f54591facc0671bc6a2241"
-PRISM_APP_GIT_REPO_URL="https://github.com/johngribbin/ROYGBIV-frontend"
-
 if [ "$DEPLOY_PRISM_BROWSER_APP" = true ]; then
-
 
     # build the browser-app image.
     # pull the base image from dockerhub and build the ./Dockerfile.
     if ! docker image list --format "{{.Repository}}:{{.Tag}}" | grep -q "$PRISM_APP_IMAGE_NAME"; then
         docker build --build-arg GIT_REPO_URL="$PRISM_APP_GIT_REPO_URL" \
-        --build-arg VERSION="$PRISM_APP_GIT_TAG" \
+        --build-arg GIT_COMMIT="$PRISM_APP_GIT_TAG" \
         -t "$PRISM_APP_IMAGE_NAME" \
         ./prism-app/
 
         sleep 5
-        
     fi
 fi
 

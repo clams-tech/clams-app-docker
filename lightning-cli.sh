@@ -7,6 +7,8 @@ cd "$(dirname "$0")"
 
 ENV_FILE_PATH=$(pwd)/environments/local.env
 
+NODE_ID=0
+
 # grab any modifications from the command line.
 for i in "$@"; do
     case $i in
@@ -14,35 +16,22 @@ for i in "$@"; do
             ENV_FILE_PATH="${i#*=}"
             shift
         ;;
+        --id=*)
+            NODE_ID="${i#*=}"
+            shift
+        ;;
         *)
         ;;
     esac
 done
 
-
-# source the 
+# ensure the source file exists.
 if [ ! -f "$ENV_FILE_PATH" ]; then
     echo "ERROR: ENV_FILE_PATH '$ENV_FILE_PATH' does not exist."
     exit 1
 fi
 
 source "$ENV_FILE_PATH"
-
-
-NODE_ID=0
-
-# grab any modifications from the command line.
-for i in "$@"; do
-    case $i in
-        --id=*)
-            NODE_ID="${i#*=}"
-            shift
-        ;;
-        *)
-
-        ;;
-    esac
-done
 
 if docker ps | grep -q "clams-stack_cln-${NODE_ID}"; then
     CLN_CONTAINER_ID="$(docker ps | grep "clams-stack_cln-${NODE_ID}" | head -n1 | awk '{print $1;}')"
