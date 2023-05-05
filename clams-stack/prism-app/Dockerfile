@@ -1,9 +1,9 @@
 FROM node:latest
 
 ARG GIT_REPO_URL
-ARG VERSION
+ARG GIT_COMMIT
 
-ENV VERSION=$VERSION
+ENV GIT_COMMIT=$GIT_COMMIT
 
 RUN mkdir /output
 VOLUME /output
@@ -19,6 +19,6 @@ ENV HOST=0.0.0.0
 ENV PORT 5173
 
 # checkout specific tag
-RUN git -c advice.detachedHead=false checkout $VERSION
+RUN git -c advice.detachedHead=false checkout $GIT_COMMIT
 
 RUN npm i

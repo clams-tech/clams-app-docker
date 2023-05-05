@@ -22,9 +22,12 @@ for i in "$@"; do
 done
 
 # source the 
-if [ -f "$ENV_FILE_PATH" ]; then
-    source "$ENV_FILE_PATH"
+if [ ! -f "$ENV_FILE_PATH" ]; then
+    echo "ERROR: the '$ENV_FILE_PATH' does not exist."
+    exit 1
 fi
+
+source "$ENV_FILE_PATH"
 
 cd ./clams-stack/
 

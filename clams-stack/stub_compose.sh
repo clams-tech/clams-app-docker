@@ -143,7 +143,7 @@ EOF
 # so we will use the replication feature
 for (( CLN_ID=0; CLN_ID<CLN_COUNT; CLN_ID++ )); do
     CLN_ALIAS="cln-${CLN_ID}-${BTC_CHAIN}"
-    CLN_COMMAND="sh -c \"chown 1000:1000 /opt/c-lightning-rest/certs && lightningd --alias=${CLN_ALIAS} --bind-addr=0.0.0.0 --announce-addr=\${CLIGHTNING_LOCAL_BIND_ADDR:-localhost}:\${CLIGHTNING_WEBSOCKET_EXTERNAL_PORT:-9736} --bitcoin-rpcuser=polaruser --bitcoin-rpcpassword=polarpass --bitcoin-rpcconnect=bitcoind --bitcoin-rpcport=\${BITCOIND_RPC_PORT:-18443} --log-level=debug --dev-bitcoind-poll=20 --dev-fast-gossip --experimental-websocket-port=9736 --plugin=/opt/c-lightning-rest/plugin.js --plugin=/plugins/prism.py --experimental-offers"
+    CLN_COMMAND="sh -c \"chown 1000:1000 /opt/c-lightning-rest/certs && lightningd --alias=${CLN_ALIAS} --bind-addr=0.0.0.0 --announce-addr=\${DOMAIN_NAME}:\${CLIGHTNING_WEBSOCKET_EXTERNAL_PORT:-9736} --bitcoin-rpcuser=polaruser --bitcoin-rpcpassword=polarpass --bitcoin-rpcconnect=bitcoind --bitcoin-rpcport=\${BITCOIND_RPC_PORT:-18443} --log-level=debug --dev-bitcoind-poll=20 --dev-fast-gossip --experimental-websocket-port=9736 --plugin=/opt/c-lightning-rest/plugin.js --plugin=/plugins/prism.py --experimental-offers"
 
     for CHAIN in regtest signet testnet; do
         CLN_COMMAND="$CLN_COMMAND --network=${BTC_CHAIN}"
