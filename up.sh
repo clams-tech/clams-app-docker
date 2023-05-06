@@ -16,6 +16,13 @@ done
 . ./defaults.env
 . ./load_env.sh
 
+if docker info | grep -q "Swarm: active"; then
+    if docker stack list | grep -q "roygbiv-stack"; then
+        echo "ERROR: the 'roygbiv-stack' is currently active. You may need to run ./down.sh or ./reset.sh first."
+        exit 1
+    fi
+fi
+
 if [ "$ENABLE_TLS" = true ] && [ "$DOMAIN_NAME" = localhost ]; then
     echo "ERROR: You can't use TLS with with a DOMAIN_NAME of 'localhost'. Use something that's resolveable by in DNS."
     exit 1
