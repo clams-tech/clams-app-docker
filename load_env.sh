@@ -1,7 +1,7 @@
 #!/bin/bash
 
-set -e
-cd "$(dirname)"
+set -ex
+cd "$(dirname "${BASH_SOURCE[0]}")"
 
 
 # read in ./active_env then source the file if it exists. export variables.
