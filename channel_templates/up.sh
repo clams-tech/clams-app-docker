@@ -8,9 +8,26 @@ until docker ps | grep -q bitcoind; do
     sleep 0.1;
 done;
 
+# set these funcs and vars here for testing
+lncli() {
+    "$(dirname "$0")/../lightning-cli.sh" "$@"
+}
+
+bcli() {
+    "$(dirname "$0")/../bitcoin-cli.sh" "$@"
+}
+
+CLN_COUNT=5
+BTC_CHAIN=regtest
+
+export -f lncli
+export -f bcli
+export CLN_COUNT
+export BTC_CHAIN
+
 ./bitcoind_load_onchain.sh
 
-#./cln_load_onchain.sh
+./cln_load_onchain.sh
 
 if [ "$BTC_CHAIN" = regtest ]; then
     ./regtest_prism.sh
