@@ -18,6 +18,6 @@ for ((i=0; i<CLN_COUNT; i++)); do
         echo "Insufficient funds. Sending 1 btc to cln-$i"
         CLN_ADDR=$(lncli --id="$i" newaddr | jq -r '.bech32')
         bcli sendtoaddress "$CLN_ADDR" 1
-        bcli -generate 1
+        bcli -generate 1 > /dev/null
     fi
 done
