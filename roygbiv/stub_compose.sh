@@ -126,12 +126,12 @@ cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
 EOF
 
 # we persist data for signet, testnet, and mainnet
-if [ "$BTC_CHAIN" != regtest ]; then
-    cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
+
+cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
     volumes:
       - bitcoind:/home/bitcoin/.bitcoin
 EOF
-fi
+
 
 cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
     deploy:
