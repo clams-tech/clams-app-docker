@@ -33,7 +33,7 @@ if [ "$(echo "$WALLET_BALANCE < 5" | bc -l) " -eq 1 ]; then
 #create address controlled by our wallet
 #bcrt1qqd7yn0wll8vx0lxe2sdh224dqathne0f3fefa2
 #BTC_ADDRESS=$(bcli getnewaddress | xargs)
-BTC_ADDRESS=bcrt1qxmxn25jtvrvhxwmz0yym8u8c96a9r9c7vk257h
+BTC_ADDRESS=bcrt1qn0ej8qzxwmmgxkcagd80rmfyfnpdak94v8zj26
 #$(bcli getnewaddress | xargs)
 echo "BTC_ADDRESS: $BTC_ADDRESS"
 echo "Make sure that the above address is created from your wallet"

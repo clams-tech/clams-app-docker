@@ -29,8 +29,9 @@ export BTC_CHAIN
 
 ./cln_load_onchain.sh
 
+./bootstrap_p2p.sh
+
+# now open channels depending on the setup.
 if [ "$BTC_CHAIN" = regtest ]; then
     ./regtest_prism.sh
-elif [ "$BTC_CHAIN" = regtest ]; then
-    echo "calling signet_prism setup."
 fi

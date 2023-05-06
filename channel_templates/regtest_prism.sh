@@ -11,7 +11,7 @@ ERIN_PUBKEY=$(lncli --id=4 getinfo | jq -r ".id")
 
 # now lets wire them up
 # Alice --> Bob
-lncli --id=0 fundchannel "$BOB_PUBKEY" $((25000000 * 1000))
+lncli --id=0 fundchannel "$BOB_PUBKEY" $((50000000 * 1000))
 
 # Bob --> Carol
 lncli --id=1 fundchannel "$CAROL_PUBKEY" $((25000000 * 1000))

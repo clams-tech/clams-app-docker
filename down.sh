@@ -52,7 +52,7 @@ if [ "$PURGE" = true ]; then
     # check dependencies
     VOLUME="bitcoin-$BTC_CHAIN"
     if docker volume list | grep -q "$VOLUME"; then
-        docker volume rm "$VOLUME" > /dev/null 2>&1
+        docker volume rm "$VOLUME"
     fi
 
 fi
