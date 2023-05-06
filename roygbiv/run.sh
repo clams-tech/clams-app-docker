@@ -125,7 +125,7 @@ if [ "$DEPLOY_PRISM_BROWSER_APP" = true ]; then
 fi
 
 # for the nginx certificates.
-docker volume create clams-certs
+docker volume create roygbiv-certs
 
 # check to see if we have certificates
 if [ "$ENABLE_TLS" = true ]; then
