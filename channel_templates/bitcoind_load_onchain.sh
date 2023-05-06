@@ -44,6 +44,6 @@ echo "Make sure that the above address is created from your wallet"
         echo "ERROR: You are on $BTC_CHAIN and cannot generate coins to your wallet. Figure out how to get some onchain funds"
         exit 1
     fi
-    else
+else
     echo "Wallet has sufficient funds: $WALLET_BALANCE BTC"
 fi

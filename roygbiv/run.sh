@@ -132,6 +132,6 @@ fi
 
 docker stack deploy -c docker-compose.yml roygbiv-stack
 
-sleep 15
+sleep 20
 
 # TODO poll for container existence.

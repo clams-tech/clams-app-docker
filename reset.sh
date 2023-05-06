@@ -23,4 +23,6 @@ done
 
 bash -c "./down.sh --purge=$PURGE"
 
+sleep 10
+
 bash -c "./up.sh"
