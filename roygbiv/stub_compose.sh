@@ -142,8 +142,10 @@ EOF
 # write out service for CLN; style is a docker stack deploy style,
 # so we will use the replication feature
 for (( CLN_ID=0; CLN_ID<CLN_COUNT; CLN_ID++ )); do
-    CLN_ALIAS="cln-${CLN_ID}-${BTC_CHAIN}"
-    CLN_COMMAND="sh -c \"chown 1000:1000 /opt/c-lightning-rest/certs && lightningd --alias=${CLN_ALIAS} --bind-addr=0.0.0.0 --announce-addr=\${DOMAIN_NAME}:\${CLIGHTNING_WEBSOCKET_EXTERNAL_PORT:-9736} --bitcoin-rpcuser=polaruser --bitcoin-rpcpassword=polarpass --bitcoin-rpcconnect=bitcoind --bitcoin-rpcport=\${BITCOIND_RPC_PORT:-18443} --log-level=debug --dev-bitcoind-poll=20 --dev-fast-gossip --experimental-websocket-port=9736 --plugin=/opt/c-lightning-rest/plugin.js --plugin=/plugins/prism.py --experimental-offers --experimental-dual-fund --experimental-peer-storage --experimental-onion-messages"
+    CLN_NAME="cln-${CLN_ID}"
+    CLN_ALIAS="${CLN_NAME}-${BTC_CHAIN}"
+    CLN_WEBSOCKET_PORT=$(( STARTING_WEBSOCKET_PORT+CLN_ID ))
+    CLN_COMMAND="sh -c \"chown 1000:1000 /opt/c-lightning-rest/certs && lightningd --alias=${CLN_ALIAS} --bind-addr=0.0.0.0:9735 --announce-addr=${CLN_NAME}:9735 --bitcoin-rpcuser=polaruser --bitcoin-rpcpassword=polarpass --bitcoin-rpcconnect=bitcoind --bitcoin-rpcport=\${BITCOIND_RPC_PORT:-18443} --log-level=debug --dev-bitcoind-poll=20 --experimental-websocket-port=9736 --plugin=/opt/c-lightning-rest/plugin.js --plugin=/plugins/prism.py --experimental-offers --experimental-dual-fund --experimental-peer-storage --experimental-onion-messages"
 
     for CHAIN in regtest signet testnet; do
         CLN_COMMAND="$CLN_COMMAND --network=${BTC_CHAIN}"
@@ -170,6 +172,16 @@ cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
     networks:
       - bitcoindnet
       - clnnet-${CLN_ID}
+EOF
+
+
+if [ "$BTC_CHAIN" = regtest ]; then
+    cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
+      - cln-p2pnet
+EOF
+fi
+
+cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
     deploy:
       mode: replicated
       replicas: 1
@@ -182,6 +194,12 @@ cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
 networks:
   bitcoindnet:
 EOF
+
+if [ "$BTC_CHAIN" = regtest ]; then
+    cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
+  cln-p2pnet:
+EOF
+fi
 
 for (( CLN_ID=0; CLN_ID<CLN_COUNT; CLN_ID++ )); do
     cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
