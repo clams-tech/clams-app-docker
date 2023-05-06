@@ -233,7 +233,7 @@ if [ "$ENABLE_TLS" = true ]; then
     cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
   certs:
     external: true
-    name: clams-certs
+    name: roygbiv-certs
 EOF
 fi
 
