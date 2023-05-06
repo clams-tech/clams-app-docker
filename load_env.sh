@@ -1,7 +1,8 @@
 #!/bin/bash
 
 set -e
-cd "$(dirname "$0")"
+cd "$(dirname)"
+
 
 # read in ./active_env then source the file if it exists. export variables.
 ACTIVE_ENV=$(cat ./active_env | head -n1 | awk '{print $1;}')
