@@ -20,5 +20,7 @@ for i in "$@"; do
     esac
 done
 
+PORT=$((STARTING_WEBSOCKET_PORT+NODE_ID))
+
 NODE_PUBKEY=$(bash -c "./lightning-cli.sh --id=$NODE_ID getinfo" | jq -r '.id')
 echo "$NODE_PUBKEY@$DOMAIN_NAME:$PORT"
