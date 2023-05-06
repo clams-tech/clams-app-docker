@@ -8,7 +8,7 @@ cd "$(dirname "$0")"
 
 if docker ps | grep -q bitcoind; then
     BITCOIND_CONTAINER_ID="$(docker ps | grep bitcoind | head -n1 | awk '{print $1;}')"
-    docker exec -it -u 1000:1000 "$BITCOIND_CONTAINER_ID" bitcoin-cli -"$BTC_CHAIN" "$@"
+    docker exec -t -u 1000:1000 "$BITCOIND_CONTAINER_ID" bitcoin-cli -"$BTC_CHAIN" "$@"
 else
     echo "ERROR: Cannot find the bitcoind container. Did you run it?"
     exit 1
