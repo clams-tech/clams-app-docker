@@ -8,6 +8,24 @@ cd "$(dirname "$0")"
 source ./defaults.env
 source ./load_env.sh
 
+PURGE=false
+
+# grab any modifications from the command line.
+for i in "$@"; do
+    case $i in
+        --purge)
+            PURGE=true
+            shift
+        ;;
+        --purge=*)
+            PURGE="${i#*=}"
+            shift
+        ;;
+        *)
+        ;;
+    esac
+done
+
 cd ./roygbiv/
 
 if [ -f ./docker-compose.yml ]; then
@@ -26,3 +44,14 @@ cd ..
 docker system prune -f
 
 docker volume prune -f
+
+sleep 2
+
+if [ "$PURGE" = true ]; then
+    # check dependencies
+    VOLUME="bitcoin-$BTC_CHAIN"
+    if docker volume list | grep -q "$VOLUME"; then
+        docker volume rm "$VOLUME" > /dev/null 2>&1
+    fi
+
+fi

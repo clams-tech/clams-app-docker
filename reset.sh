@@ -17,27 +17,6 @@ for i in "$@"; do
     esac
 done
 
-. ./defaults.env
-. ./load_env.sh
-
-bash -c "./down.sh"
-
-if [ "$PURGE" = true ]; then
-    # check dependencies
-    for CHAIN in regtest signet testnet mainnet; do
-        VOLUME="bitcoin-$CHAIN"
-        if docker volume list | grep -q "$VOLUME"; then
-            docker volume rm "$VOLUME" > /dev/null 2>&1
-        fi
-    done
-
-    # # clear dangling volumes
-    # for VOLUME in $(docker volume ls -q --filter dangling=true); do
-    #     if [ "$VOLUME" != roygbiv-certs ]; then
-    #         docker volume rm "$VOLUME" > /dev/null 2>&1
-    #     fi
-    # done
-
-fi
+bash -c "./down.sh --purge=$PURGE"
 
 bash -c "./up.sh"
