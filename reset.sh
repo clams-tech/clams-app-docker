@@ -4,30 +4,9 @@ set -eu
 cd "$(dirname "$0")"
 
 . ./defaults.env
+. ./load_env.sh
 
-ENV_FILE_PATH=$(pwd)/environments/local.env
-
-# grab any modifications from the command line.
-for i in "$@"; do
-    case $i in
-        --env-file-path=*)
-            ENV_FILE_PATH="${i#*=}"
-            shift
-        ;;
-        *)
-        ;;
-    esac
-done
-
-# source the 
-if [ ! -f "$ENV_FILE_PATH" ]; then
-    echo "ERROR: ENV_FILE_PATH '$ENV_FILE_PATH' does not exist."
-    exit 1
-fi
-
-source "$ENV_FILE_PATH"
-
-bash -c "./down.sh --env-file-path=$ENV_FILE_PATH"
+bash -c "./down.sh"
 
 # ANSWER=n
 # read -r -e -p "Would you like to delete (non cert) volumes?" ANSWER
@@ -67,4 +46,4 @@ bash -c "./down.sh --env-file-path=$ENV_FILE_PATH"
 # fi
 
 
-bash -c "./up.sh --env-file-path=$ENV_FILE_PATH"
+bash -c "./up.sh"

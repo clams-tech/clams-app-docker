@@ -5,7 +5,6 @@ cd "$(dirname "$0")"
 
 # This script runs the whole Clams stack as determined by the various ./.env files
 
-
 # check dependencies
 for cmd in jq docker dig; do
     if ! command -v "$cmd" >/dev/null 2>&1; then
@@ -15,28 +14,7 @@ for cmd in jq docker dig; do
 done
 
 . ./defaults.env
-
-ENV_FILE_PATH=$(pwd)/environments/local.env
-
-# grab any modifications from the command line.
-for i in "$@"; do
-    case $i in
-        --env-file-path=*)
-            ENV_FILE_PATH="${i#*=}"
-            shift
-        ;;
-        *)
-        ;;
-    esac
-done
-
-# source the 
-if [ ! -f "$ENV_FILE_PATH" ]; then
-    echo "ERROR: The environment path file could not be found."
-    exit 1
-fi
-
-source "$ENV_FILE_PATH"
+. ./load_env.sh
 
 if [ "$ENABLE_TLS" = true ] && [ "$DOMAIN_NAME" = localhost ]; then
     echo "ERROR: You can't use TLS with with a DOMAIN_NAME of 'localhost'. Use something that's resolveable by in DNS."
@@ -59,27 +37,21 @@ fi
 export DOCKER_HOST="$DOCKER_HOST"
 export BTC_CHAIN="$BTC_CHAIN"
 export CLIGHTNING_WEBSOCKET_EXTERNAL_PORT="$CLIGHTNING_WEBSOCKET_EXTERNAL_PORT"
-
 export ENABLE_TLS="$ENABLE_TLS"
 export LIGHTNING_P2P_EXTERNAL_PORT="$CLIGHTNING_P2P_EXTERNAL_PORT"
-
 export LN_WS_PROXY_HOSTNAME="$LN_WS_PROXY_HOSTNAME"
 export BROWSER_APP_EXTERNAL_PORT="$BROWSER_APP_EXTERNAL_PORT"
-
 export BROWSER_APP_GIT_REPO_URL="$BROWSER_APP_GIT_REPO_URL"
 export BROWSER_APP_GIT_TAG="$BROWSER_APP_GIT_TAG"
 export LN_WS_PROXY_GIT_REPO_URL="$LN_WS_PROXY_GIT_REPO_URL"
 export LN_WS_PROXY_GIT_TAG="$LN_WS_PROXY_GIT_TAG"
 export CLN_COUNT="$CLN_COUNT"
-
 export DEPLOY_CLAMS_BROWSER_APP="$DEPLOY_CLAMS_BROWSER_APP"
 export DEPLOY_PRISM_BROWSER_APP="$DEPLOY_PRISM_BROWSER_APP"
 export DOMAIN_NAME="$DOMAIN_NAME"
 CLAMS_FQDN="clams.${DOMAIN_NAME}"
 export CLAMS_FQDN="$CLAMS_FQDN"
-
 export STARTING_WEBSOCKET_PORT="$STARTING_WEBSOCKET_PORT"
-
 export PRISM_APP_GIT_TAG="$PRISM_APP_GIT_TAG"
 export PRISM_APP_GIT_REPO_URL="$PRISM_APP_GIT_REPO_URL"
 PRISM_APP_IMAGE_TAG="${PRISM_APP_GIT_TAG: -5}"
@@ -101,8 +73,11 @@ for (( CLN_ID=0; CLN_ID<CLN_COUNT; CLN_ID++ )); do
     CLN_WEBSOCKET_PORT=$(( STARTING_WEBSOCKET_PORT+CLN_ID ))
 
     # now let's output the core lightning node URI so the user doesn't need to fetch that manually.
-    CLN_NODE_URI=$(bash -c "./get_node_uri.sh --env-file-path=${ENV_FILE_PATH} --id=${CLN_ID} --port=${CLN_WEBSOCKET_PORT}")
+    CLN_NODE_URI=$(bash -c "./get_node_uri.sh --id=${CLN_ID} --port=${CLN_WEBSOCKET_PORT}")
     echo "Your core-lightning websocket \"Direct Connection (ws)\" for '$CLN_ALIAS' is: $CLN_NODE_URI"
+    
+    # RUNE=$(bash -c "./get_rune.sh --id=${CLN_ID} --port=${CLN_WEBSOCKET_PORT}")
+    # echo "Your cln admin rune for ${CLN_ALIAS} is: $RUNE"
 done
 
 
