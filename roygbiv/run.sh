@@ -40,13 +40,11 @@ export CLIGHTNING_P2P_PORT="$CLIGHTNING_P2P_PORT"
 export WEBSOCKET_PORT_LOCAL="$WEBSOCKET_PORT_LOCAL"
 export CLIGHTNING_LOCAL_BIND_ADDR="$CLIGHTNING_LOCAL_BIND_ADDR"
 
-# create docker volumes; regtest should never be persisted.
-for CHAIN in regtest signet testnet mainnet; do
-    VOLUME_NAME="bitcoin-${CHAIN}"
-    if ! docker volume list --format csv | grep -q "$VOLUME_NAME"; then
-        docker volume create "$VOLUME_NAME"
-    fi
-done
+# create our docker volume for bitcoind
+VOLUME_NAME="bitcoin-${BTC_CHAIN}"
+if ! docker volume list --format csv | grep -q "$VOLUME_NAME"; then
+    docker volume create "$VOLUME_NAME"
+fi
 
 # we're using docker swarm style stacks, so enable swarm mode.
 if docker info | grep -q "Swarm: inactive"; then
