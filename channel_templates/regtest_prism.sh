@@ -2,6 +2,22 @@
 
 set -ex
 
+names=(alice bob carol dave erin frank greg hannah ian jane kelly laura mario nick olivia)
+
+# dynamically set each name to the output of getinfo
+for ((i=0; i<CLN_COUNT; i++)); do
+    var_name=${names[$i]}
+    node_info=$(lncli --id="$i" getinfo)
+    eval "${var_name}=\$node_info"
+done
+
+for ((i=0; i<CLN_COUNT; i++)); do 
+    echo "${names[$i]} pubkey is $(echo "${!names[$i]}" | jq -r ".id")"
+done
+
+# echo "Bob: $bob"
+# echo "Carol: $carol"
+
 
 # this script creates channels among 5 nodes in the following way:
     # 1.  Alice[0]->Bob[1]
@@ -11,11 +27,11 @@ set -ex
 
 
 # Lets first get pubkeys for all nodes
-ALICE_PUBKEY=$(lncli --id=0 getinfo | jq -r ".id")
-BOB_PUBKEY=$(lncli --id=1 getinfo | jq -r ".id")
-CAROL_PUBKEY=$(lncli --id=2 getinfo | jq -r ".id")
-DAVE_PUBKEY=$(lncli --id=3 getinfo | jq -r ".id")
-ERIN_PUBKEY=$(lncli --id=4 getinfo | jq -r ".id")
+# ALICE_PUBKEY=$(lncli --id=0 getinfo | jq -r ".id")
+# BOB_PUBKEY=$(lncli --id=1 getinfo | jq -r ".id")
+# CAROL_PUBKEY=$(lncli --id=2 getinfo | jq -r ".id")
+# DAVE_PUBKEY=$(lncli --id=3 getinfo | jq -r ".id")
+# ERIN_PUBKEY=$(lncli --id=4 getinfo | jq -r ".id")
 
 
 # now lets wire them up
