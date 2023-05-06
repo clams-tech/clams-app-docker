@@ -1,8 +1,7 @@
-# prism-stack
-
+# roygbiv-stack
 ## overview
 
-This repo allows you to deploy the `roygbiv-prism` stack quickly in a [modern docker engine](https://docs.docker.com/engine/) using [docker swarm mode](`https://docs.docker.com/engine/swarm/`). The main scripts you need to know about are:
+This repo allows you to deploy the `roygbiv-stack` stack quickly in a [modern docker engine](https://docs.docker.com/engine/) using [docker swarm mode](`https://docs.docker.com/engine/swarm/`). The main scripts you need to know about are:
 
 * [`./install.sh`](install.sh) - this script installs dockerd and other utilities needed to run the rest of this software.
 * [`./up.sh`](./up.sh) - brings up your the `roygbiv stack` according to your `env` file (defined in `./environments`).
@@ -31,9 +30,9 @@ wss://CLAMS_HOST:9738
 
 > When `ENABLE_TLS=true` you MUST forward ports 80/tcp and 443/tcp during certificate issuance and renewal (i.e., PUBLIC->IP_ADDRESS:80/443) for everything to work.
 
-## spinning up a new VM in a cloud provider
+## third party hosting
 
-Ok so lets say you want to create a server in the cloud so you can run this `roygbiv-stack`. All we assume is you're running ubuntu 22.04 server. After getting SSH access the to VM you should copy the contents of ./install.sh and paste them into the remote VM (will try to automate this later). This installs dockerd in the instance. Then log out.
+Lets say you want to create a server in the cloud so you can run `roygbiv-stack`. All we assume is you're running ubuntu 22.04 server. After getting SSH access the to VM you should copy the contents of ./install.sh and paste them into the remote VM (will try to automate this later). This installs dockerd in the instance. Then log out.
 
 ### DNS
 
@@ -68,19 +67,20 @@ This setup is useful for testing lightning prisms. If you want control a node, o
 
 Configure the `prism-browser-app` against Alice, who will create the prism and expose the BOLT12 offer. All payments to the BOLT12 offer can be done in Bob's Clams app.
 
-### signet
+## signet
 
 STATUS: NOT COMPLETELY IMPLEMENTED
 
 If you want to run signet, set BTC_CHAIN=signet in .env. By default this runs the public signet which has a 10 minute block time. The plan is to add a [private signet](https://blog.mutinywallet.com/mutinynet/) with configurable blocktimes. This is useful for lab or educational settings where waiting 10 minutes for channel creation is untenable.
 
 
-#### Publc Signets
+## Publc Signets
 
-TODO
-#### Private Signets
+Implemented: currenly if running signet, we connect to the default public signet with 10m blocks times. TODO: would like to connect to the public Mutinynet for 30 second block times.
 
-TODO
+## TODO - Private Signets
+
+In addition to connecting to public signets, it would be useful for lab settings to deploy a network of `n` CLN nodes all running on a private signet. These CLN nodes would only be able to connect with CLN nodes within the private signet.
 ## QR codes
 
 STATUS: NOT STARTED
