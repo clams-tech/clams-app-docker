@@ -111,9 +111,6 @@ EOF
 fi
 
 
-
-
-
 cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
 
   bitcoind:
@@ -147,10 +144,8 @@ for (( CLN_ID=0; CLN_ID<CLN_COUNT; CLN_ID++ )); do
     CLN_WEBSOCKET_PORT=$(( STARTING_WEBSOCKET_PORT+CLN_ID ))
     CLN_COMMAND="sh -c \"chown 1000:1000 /opt/c-lightning-rest/certs && lightningd --alias=${CLN_ALIAS} --bind-addr=0.0.0.0:9735 --announce-addr=${CLN_NAME}:9735 --bitcoin-rpcuser=polaruser --bitcoin-rpcpassword=polarpass --bitcoin-rpcconnect=bitcoind --bitcoin-rpcport=\${BITCOIND_RPC_PORT:-18443} --log-level=debug --dev-bitcoind-poll=20 --experimental-websocket-port=9736 --plugin=/opt/c-lightning-rest/plugin.js --plugin=/plugins/prism.py --experimental-offers --experimental-dual-fund --experimental-peer-storage --experimental-onion-messages"
 
-    for CHAIN in regtest signet testnet; do
-        CLN_COMMAND="$CLN_COMMAND --network=${BTC_CHAIN}"
-    done
-
+    CLN_COMMAND="$CLN_COMMAND --network=${BTC_CHAIN}"
+ 
     CLN_COMMAND="$CLN_COMMAND\""
     cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
   cln-${CLN_ID}:
@@ -165,6 +160,7 @@ cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
     volumes:
       - cln-${CLN_ID}:/home/clightning/.lightning
       - cln-${CLN_ID}-certs:/opt/c-lightning-rest/certs
+      - ${PWD}/cln-plugins:/plugins
 EOF
 
 
@@ -222,7 +218,7 @@ volumes:
 EOF
 
 cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
-
+  plugins:
   bitcoind:
     external: true
     name: bitcoind-${BTC_CHAIN}
