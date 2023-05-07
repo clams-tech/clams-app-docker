@@ -48,11 +48,18 @@ docker volume prune -f
 
 sleep 2
 
+
+# let's delete all volumes EXCEPT roygbiv-certs
 if [ "$PURGE" = true ]; then
-    # check dependencies
-    VOLUME="bitcoin-$BTC_CHAIN"
-    if docker volume list | grep -q "$VOLUME"; then
-        docker volume rm "$VOLUME"
-    fi
+
+    # get a list of all the volumes
+    VOLUMES=$(docker volume list -q)
+
+    # Iterate over each value in the list
+    for VOLUME in $VOLUMES; do
+        if ! echo "$VOLUME" | grep -q "roygbiv-certs"; then
+            docker volume rm "$VOLUME"
+        fi
+    done
 
 fi
