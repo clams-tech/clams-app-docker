@@ -64,23 +64,19 @@ export CLN_IMAGE="$CLN_IMAGE"
 ./stub_compose.sh
 ./stub_nginx_conf.sh
 
-# pull bitcoind down
-docker pull "polarlightning/bitcoind:24.0"
-
-if ! docker image list | grep -q "roygbiv/cln"; then
-
-    docker pull "polarlightning/clightning:23.02.2"
-
-    # build the docker image which contains dependencies for cln plugin prism.py
-
-    docker build -t "$CLN_IMAGE_NAME:$CLN_IMAGE_TAG" .
-
-    sleep 5
-
-    echo "Your image '$CLN_IMAGE_NAME:$CLN_IMAGE_TAG' has been updated."
+BITCOIND_DOCKER_IMAGE_NAME="polarlightning/bitcoind:24.0"
+if ! docker image list | grep -q "$BITCOIND_DOCKER_IMAGE_NAME"; then
+    # pull bitcoind down
+    docker pull "$BITCOIND_DOCKER_IMAGE_NAME"
 fi
 
+LIGHTNINGD_DOCKER_IMAGE_NAME="polarlightning/clightning:23.02.2"
+if ! docker image list | grep -q "$LIGHTNINGD_DOCKER_IMAGE_NAME"; then
+    docker pull "$LIGHTNINGD_DOCKER_IMAGE_NAME"
+fi
 
+# build the cln image with our plugins
+docker build -t "$CLN_IMAGE_NAME:$CLN_IMAGE_TAG" .
 
 if [ "$DEPLOY_CLAMS_BROWSER_APP" = true ]; then
     # create a volume to hold the browser app build output
