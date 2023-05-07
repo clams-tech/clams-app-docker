@@ -164,9 +164,7 @@ cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
     volumes:
       - cln-${CLN_ID}:/home/clightning/.lightning
       - cln-${CLN_ID}-certs:/opt/c-lightning-rest/certs
-      - ${PWD}/cln-plugins:/plugins
 EOF
-
 
 cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
     networks:
@@ -222,7 +220,7 @@ volumes:
 EOF
 
 cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
-  plugins:
+
   bitcoind:
     external: true
     name: bitcoind-${BTC_CHAIN}
