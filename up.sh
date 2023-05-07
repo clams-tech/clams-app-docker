@@ -65,8 +65,6 @@ PRISM_APP_IMAGE_TAG="${PRISM_APP_GIT_TAG: -5}"
 PRISM_APP_IMAGE_NAME="prism-browser-app:$PRISM_APP_IMAGE_TAG"
 export PRISM_APP_IMAGE_NAME="$PRISM_APP_IMAGE_NAME"
 
-names=(alice bob carol dave erin frank greg hannah ian jane kelly laura mario nick olivia)
-export names
 
 ./roygbiv/run.sh
 

@@ -5,6 +5,10 @@ cd "$(dirname "$0")"
 
 # this script writes out the docker-compose.yml file.
 
+
+names=(alice bob carol dave erin frank greg hannah ian jane kelly laura mario nick olivia)
+
+
 # close HTTP block
 DOCKER_COMPOSE_YML_PATH="$(pwd)/docker-compose.yml"
 touch "$DOCKER_COMPOSE_YML_PATH"
