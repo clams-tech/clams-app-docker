@@ -15,7 +15,7 @@ def init(options, configuration, plugin, **kwargs):
 @plugin.method("prism")
 def prism(plugin, label, members):
     try:
-        # check members is of form [{"name": "alias", "destination": "pubkey", "amount": number}]
+        # check members is of form [{"name": "alias", "destination": "pubkey", "split": number}]
         # todo: validate destination is a valid pubkey.
         validate_members(members)
         # maybe try to find a route first, and if no route can be found then
@@ -60,13 +60,13 @@ def on_payment(plugin, invoice_payment, **kwargs):
     #   if there is an existing offer that check that it exists in our datastore
 
     plugin.log("Received invoice_payment event for label {label}, preimage {preimage},"
-               " and amount of {msat}".format(**invoice_payment))
+               " and split of {msat}".format(**invoice_payment))
 
     # we will check if bolt12 we stored earlier in the prism call is in the label of the bolt11 invoice
     # at that point keysend pubkeys in the members
     # todo: set this as an env var
     lrpc = LightningRpc(path_to_rpc)
-    expected_keys = {"destination", "pubkey", "amount"}
+    expected_keys = {"destination", "pubkey", "split"}
 
     # check datastore
     #   todo: check if data store is empty. When you ask for offer_id,
@@ -84,14 +84,14 @@ def on_payment(plugin, invoice_payment, **kwargs):
     plugin.log("Members: {}".format(members))
 
     # determine how many satoshis to send each member
-    total_split = sum(map(lambda member: member['amount'], members))
+    total_split = sum(map(lambda member: member['split'], members))
 
     plugin.log("Invoice payment: {}".format(invoice_payment['msat']))
 
     for member in members:
         # iterate over each prism member and send them their split
         # msat comes as "5000msat"
-        deserved_msats = floor((member['amount'] / total_split) *
+        deserved_msats = floor((member['split'] / total_split) *
                                int(invoice_payment['msat'][:-4]))
 
         lrpc.keysend(destination=member["destination"], amount_msat=Millisatoshi(
@@ -114,7 +114,7 @@ def validate_members(members):
         if not isinstance(member, dict):
             raise ValueError("Each member in the list must be a dictionary.")
 
-        required_keys = ["name", "destination", "amount"]
+        required_keys = ["name", "destination", "split"]
         for key in required_keys:
             if key not in member:
                 raise ValueError(f"Member must contain '{key}' key.")
@@ -125,8 +125,8 @@ def validate_members(members):
         if not isinstance(member["destination"], str):
             raise ValueError("Member 'destination' must be a string.")
 
-        if not isinstance(member["amount"], (int, float)):
-            raise ValueError("Member 'amount' must be a number.")
+        if not isinstance(member["split"], (int, float)):
+            raise ValueError("Member 'split' must be a number.")
 
 
 plugin.run()  # Run our plugin
