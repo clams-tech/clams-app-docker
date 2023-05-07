@@ -11,13 +11,20 @@ ERIN_PUBKEY=$(lncli --id=4 getinfo | jq -r ".id")
 
 # now lets wire them up
 # Alice --> Bob
-lncli --id=0 fundchannel "$BOB_PUBKEY" $((50000000 * 1000))
+lncli --id=0 fundchannel "$BOB_PUBKEY" $((5000000))
+echo "Alice opened a channel to Bob"
 
 # Bob --> Carol
-lncli --id=1 fundchannel "$CAROL_PUBKEY" $((25000000 * 1000))
+lncli --id=1 fundchannel "$CAROL_PUBKEY" $((5000000))
+echo "Bob opened a channel to Carol"
+bcli -generate 1
 
 # Bob --> Dave
-lncli --id=1 fundchannel "$DAVE_PUBKEY" $((25000000 * 1000))
+lncli --id=1 fundchannel "$DAVE_PUBKEY" $((5000000))
+echo "Bob opened a channel to Dave"
+bcli -generate 1
 
 #  Bob --> Erin
-lncli --id=1 fundchannel "$ERIN_PUBKEY" $((25000000 * 1000))
+lncli --id=1 fundchannel "$ERIN_PUBKEY" $((5000000))
+echo "Bob opened a channel to Erin"
+bcli -generate 1

@@ -29,7 +29,7 @@ WALLET_NAME=$(echo "$WALLET_INFO" | jq -r '.walletname')
 
 echo "$WALLET_NAME wallet initialized"
 
-if [ "$(echo "$WALLET_BALANCE < 5" | bc -l) " -eq 1 ]; then
+if [ "$(echo "$WALLET_BALANCE < 50" | bc -l) " -eq 1 ]; then
 #create address controlled by our wallet
 #bcrt1qqd7yn0wll8vx0lxe2sdh224dqathne0f3fefa2
 BTC_ADDRESS=$(bcli getnewaddress)
@@ -37,7 +37,7 @@ CLEAN_BTC_ADDRESS=$(echo -n "$BTC_ADDRESS" | tr -d '\r')
 echo "BTC_ADDRESS: $CLEAN_BTC_ADDRESS"
 echo "Make sure that the above address is created from your wallet"
     if [ "$BTC_CHAIN" == regtest ]; then
-        bcli generatetoaddress 101 $CLEAN_BTC_ADDRESS
+        bcli generatetoaddress 105 "$CLEAN_BTC_ADDRESS" > /dev/null
         echo "101 blocks mined to $WALLET_NAME"
     else 
         echo "ERROR: You are on $BTC_CHAIN and cannot generate coins to your wallet. Figure out how to get some onchain funds"
