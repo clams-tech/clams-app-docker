@@ -76,3 +76,47 @@ Returns an array of prism metadata:
 ]
 
 ```
+
+## Using with the [Clams Stack](https://github.com/farscapian/clams-app-docker)
+
+1. Make sure you've gone through the setup and have these environment variables set:
+
+```
+CLN_COUNT=5
+BTC_CHAIN=regtest
+```
+
+2. Interact with your CLN nodes by running the `lightning-cli.sh` script. To target a specific node, pass the script and id. Here's an example of how you can list the prisms on the second node (bob).
+
+_NOTE: make sure you are in the root dir of clams-app-docker_
+
+```
+./lightning-cli.sh --id=1 listprisms
+```
+
+You could of course replace `id` with 0 <= id < CLN_COUNT
+
+3. If you tried that and there was no prisms, try to run `create_prism.sh` (in the channel_templates dir). This will create one prism that lives on bob's node and stores carol, dave, and erin as prism members. Feel free to mess around with the splits they each recieve as defined in the script.
+
+## Paying to a prism from the CLI
+
+_Assuming you are still using the clams-app-docker stack_
+
+1. Retrieve the bolt12 offer for a prism: `./lightning-cli.sh --id=1 listprisms`
+2. Use Alice's node to fetch the invoice from Bob. Like so:
+
+```
+./lightning-cli.sh --id=0 fetchinvoice <bolt12> <amount_msats>
+```
+
+3. Now, Alice can pay Bob's offer:
+
+```
+./lightning-cli.sh --id=0 pay <invoice_copied_from_fetchinvoice>
+```
+
+4. Check out Carol, Dave, or Erin's balance by doing something like `./lightning-cli.sh --id=3 listfunds` and examine the `channel-sat` value for the channel they have open with Bob
+
+# Conclusion
+
+Creating a prism results in a payable bolt12 offer that will split the payment to n number of prism members. Each member gets a relative split. The `prism` method allows you to create prisms and the `listprisms` method will fetch all prisms stored on that node. We then went through how you could use the [Clams Stack](https://github.com/farscapian/clams-app-docker) with prisms to easily spin up a test environment and interact with nodes and prims using the handy lightning-cli.sh script.
