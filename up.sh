@@ -77,19 +77,5 @@ if [ "$DEPLOY_CLAMS_BROWSER_APP" = true ]; then
     echo "The prism-browser-app is available at http://${DOMAIN_NAME}:${BROWSER_APP_EXTERNAL_PORT}"
 fi
 
-# print out the CLN node URIs for the user.
-for (( CLN_ID=0; CLN_ID<CLN_COUNT; CLN_ID++ )); do
-    CLN_ALIAS="cln-${CLN_ID}"
-    CLN_WEBSOCKET_PORT=$(( STARTING_WEBSOCKET_PORT+CLN_ID ))
-
-    # now let's output the core lightning node URI so the user doesn't need to fetch that manually.
-    CLN_NODE_URI=$(bash -c "./get_node_uri.sh --id=${CLN_ID} --port=${CLN_WEBSOCKET_PORT}")
-    echo "Your core-lightning websocket \"Direct Connection (ws)\" for '$CLN_ALIAS' is: $CLN_NODE_URI"
-    
-    # RUNE=$(bash -c "./get_rune.sh --id=${CLN_ID} --port=${CLN_WEBSOCKET_PORT}")
-    # echo "Your cln admin rune for ${CLN_ALIAS} is: $RUNE"
-done
-
-
 # ok, let's do the channel logic
 ./channel_templates/up.sh
