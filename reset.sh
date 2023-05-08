@@ -6,7 +6,6 @@ cd "$(dirname "$0")"
 . ./defaults.env
 . ./load_env.sh
 
-
 PURGE=false
 
 # grab any modifications from the command line.

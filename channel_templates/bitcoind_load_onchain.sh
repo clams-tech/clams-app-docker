@@ -27,8 +27,6 @@ echo "$WALLET_NAME wallet initialized"
 
 if [ "$(echo "$WALLET_BALANCE < 50" | bc -l) " -eq 1 ]; then
 
-    echo "Make sure that the above address is created from your wallet"
-
     BTC_ADDRESS=$(bcli getnewaddress)
     CLEAN_BTC_ADDRESS=$(echo -n "$BTC_ADDRESS" | tr -d '\r')
 
