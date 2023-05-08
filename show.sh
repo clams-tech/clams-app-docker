@@ -12,11 +12,13 @@ for (( CLN_ID=0; CLN_ID<CLN_COUNT; CLN_ID++ )); do
     CLN_WEBSOCKET_PORT=$(( STARTING_WEBSOCKET_PORT+CLN_ID ))
     CLN_P2P_PORT=$(( STARTING_CLN_PTP_PORT+CLN_ID ))
 
-
     # now let's output the core lightning node URI so the user doesn't need to fetch that manually.
-    #CLN_WEBSOCKET_URI=$(bash -c "./get_node_uri.sh --id=${CLN_ID} --port=${CLN_WEBSOCKET_PORT}")
+    if [ "$ACTIVE_ENV" = "local.env" ]; then
+        CLN_WEBSOCKET_URI=$(bash -c "./get_node_uri.sh --id=${CLN_ID} --port=${CLN_WEBSOCKET_PORT}")
+        echo "Core-lightning websocket URI for '$CLN_ALIAS': $CLN_WEBSOCKET_URI"
+    fi
+
     CLN_P2P_URI=$(bash -c "./get_node_uri.sh --id=${CLN_ID} --port=${CLN_P2P_PORT}")
-    #echo "Core-lightning websocket URI for '$CLN_ALIAS': $CLN_WEBSOCKET_URI"
     echo "Core-lightning native P2P URI for '$CLN_ALIAS': $CLN_P2P_URI"
     
     RUNE=$(bash -c "./get_rune.sh --id=${CLN_ID}")
