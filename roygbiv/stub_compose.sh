@@ -159,6 +159,10 @@ for (( CLN_ID=0; CLN_ID<CLN_COUNT; CLN_ID++ )); do
       ${CLN_COMMAND}
 EOF
 
+cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
+    environment:
+      - RPC_PATH=${RPC_PATH}
+EOF
 
 cat >> "$DOCKER_COMPOSE_YML_PATH" <<EOF
     volumes:
