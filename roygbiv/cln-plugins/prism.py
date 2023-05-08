@@ -39,7 +39,7 @@ def prism(plugin, label, members):
 
         # add the prism info to datastore with the offer_id as the key
         lrpc.datastore(offer["offer_id"],
-                       string=json.dumps({"label": label, "members": members}))
+                       string=json.dumps({"label": label, "bolt12": offer["bolt12"], "members": members}))
 
         return offer
     except RpcError as e:
