@@ -8,6 +8,7 @@ plugin = Plugin()
 
 pubkeyRegex = re.compile(r'^0[2-3][0-9a-fA-F]{64}$')
 
+
 @plugin.init()  # Decorator to define a callback once the `init` method call has successfully completed
 def init(options, configuration, plugin, **kwargs):
     plugin.log("Plugin prism.py initialized")
@@ -25,9 +26,10 @@ def prism(plugin, label, members):
         lrpc = LightningRpc(os.getenv('RPC_PATH'))
         # returns object containing bolt12 offer
         offer = lrpc.offer("any", label)
+        offer_id = offer["offer_id"]
 
-        existing_offer = lrpc.listdatastore(offer["offer_id"])
-        if existing_offer:
+        datastore = lrpc.listdatastore(offer_id)["datastore"]
+        if any(offer_id in d['key'] for d in datastore):
             raise Exception('Existing offer already exists')
 
         # todo: requesting to add an offer with exact same params will not create a new offer
@@ -50,7 +52,7 @@ plugin.add_option('destination', 'destination', 'default_destination')
 
 @plugin.subscribe("invoice_payment")
 def on_payment(plugin, invoice_payment, **kwargs):
-    try:      
+    try:
         # label is of form offer_id-invreq_payer_id-0, but I do not if know thats always the case
         offer_id = invoice_payment["label"].split("-")[0]
 
@@ -60,13 +62,12 @@ def on_payment(plugin, invoice_payment, **kwargs):
         #   if there is an existing offer that check that it exists in our datastore
 
         plugin.log("Received invoice_payment event for label {label}, preimage {preimage},"
-                " and split of {msat}".format(**invoice_payment))
+                   " and split of {msat}".format(**invoice_payment))
 
         # we will check if bolt12 we stored earlier in the prism call is in the label of the bolt11 invoice
         # at that point keysend pubkeys in the members
         # todo: set this as an env var
         lrpc = LightningRpc(os.getenv('RPC_PATH'))
-
 
         # check datastore
         #   todo: check if data store is empty. When you ask for offer_id,
@@ -92,7 +93,7 @@ def on_payment(plugin, invoice_payment, **kwargs):
             # iterate over each prism member and send them their split
             # msat comes as "5000msat"
             deserved_msats = floor((member['split'] / total_split) *
-                                int(invoice_payment['msat'][:-4]))
+                                   int(invoice_payment['msat'][:-4]))
 
             lrpc.keysend(destination=member["destination"], amount_msat=Millisatoshi(
                 deserved_msats))
@@ -127,11 +128,12 @@ def validate_members(members):
 
         if not isinstance(member["destination"], str):
             raise ValueError("Member 'destination' must be a valid pubkey")
-        
-        valid_pubkey = member["destination"] if pubkeyRegex.match(member["destination"]) else None
+
+        valid_pubkey = member["destination"] if pubkeyRegex.match(
+            member["destination"]) else None
         if valid_pubkey is None:
             raise Exception("Invalid pubkey was provided")
-        
+
         if not isinstance(member["split"], int):
             raise ValueError("Member 'split' must be an integer")
 
