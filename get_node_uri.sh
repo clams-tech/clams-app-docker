@@ -7,6 +7,7 @@ cd "$(dirname "$0")"
 . ./load_env.sh
 
 NODE_ID=0
+PORT=9735
 
 # grab any modifications from the command line.
 for i in "$@"; do
@@ -15,12 +16,14 @@ for i in "$@"; do
             NODE_ID="${i#*=}"
             shift
         ;;
+        --port=*)
+            PORT="${i#*=}"
+            shift
+        ;;
         *)
         ;;
     esac
 done
-
-PORT=$((STARTING_WEBSOCKET_PORT+NODE_ID))
 
 NODE_PUBKEY=$(bash -c "./lightning-cli.sh --id=$NODE_ID getinfo" | jq -r '.id')
 echo "$NODE_PUBKEY@$DOMAIN_NAME:$PORT"
